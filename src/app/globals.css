@@ -2,20 +2,58 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
+/* global.css */
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #ffa726;
+    --foreground: #333333;
+    --primary: #1976d2;
+    --primary-foreground: #ffffff;
+    --secondary: #ffcc80;
+    --secondary-foreground: #333333;
+    --accent: #ff7043;
+    --accent-foreground: #ffffff;
+    --destructive: #d32f2f;
+    --destructive-foreground: #ffffff;
+    --muted: #e0e0e0;
+    --muted-foreground: #6d6d6d;
+    --card: #ffffff;
+    --card-foreground: #333333;
+    --popover: #1976d2;
+    --popover-foreground: #ffffff;
+    --border: #e0e0e0;
+    --input: #ffffff;
+    --ring: #ffa726;
+    --radius: 4px;
   }
-}
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  /* Optional: Apply Tailwind styles to global elements */
+  body {
+    @apply bg-[var(--background)] text-[var(--foreground)];
+  }
+
+  button {
+    @apply rounded px-4 py-2 transition-all;
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+  }
+
+  button:hover {
+    background-color: #155a9a;
+  }
+
+  /* Utility classes for theme-based colors */
+  .bg-accent {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+  }
+
+  .bg-secondary {
+    background-color: var(--secondary);
+    color: var(--secondary-foreground);
+  }
+
+  .border-default {
+    border-color: var(--border);
+  }
 }
