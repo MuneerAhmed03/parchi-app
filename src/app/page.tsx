@@ -24,8 +24,6 @@ import { Label } from "@/components/ui/label"
  
 
 export default function Home() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
   return (
     <div className="min-h-screen flex flex-col">
       <header className="w-full relative flex justify-center items-center py-4">
@@ -46,7 +44,6 @@ export default function Home() {
       </PopoverContent>
     </Popover>
 
-        {/* Banner and Title */}
         <div className="relative w-full max-w-[500px] mx-auto">
           <Image
             src={Banner}
@@ -63,19 +60,46 @@ export default function Home() {
           </div>
         </div>
       </header>
-      
-      {/* Main Content */}
-      <main className="flex-1 flex items-center justify-center">
-        <div className="w-full max-w-[90vw] h-[60vh]">
-          <div className="font-pencil z-50 flex items-center justify-center">
-          <Dialog>
-          <DialogTrigger>
-            Join Room
-      </DialogTrigger>
-          </Dialog>
-          </div>
+
+      <main className="flex-1 flex items-center justify-center font-pencil relative">
+      <div className="w-full max-w-[90vw] h-[60vh] relative">
+        <div className="absolute inset-0 z-20">
           <StackedParchi count={4} />
         </div>
+        <div className="absolute inset-0 z-30 flex flex-col items-center justify-center gap-20">
+          <Dialog>
+            <DialogTrigger className="bg-white border-2 border-zinc-600 px-4 py-2   rotate-6 rounded-lg shadow-md text-primary hover:bg-gray-100 transition-colors min-w-32 min-h-12">
+              Create Room
+            </DialogTrigger>
+            <DialogContent className="bg-[#ff7043] font-pencil text-white">
+            <DialogTitle className="text-center font-bold">Create Room</DialogTitle>
+            </DialogContent>
+          </Dialog>
+          <Dialog>
+            <DialogTrigger className="bg-white border-2 border-zinc-600 px-4 py-2   -rotate-6 rounded-lg shadow-md text-primary hover:bg-gray-100 transition-colors justify-items-stretch min-w-36 min-h-12">
+              Join Room 
+            </DialogTrigger>
+            <DialogContent className="bg-[#ff7043] font-pencil text-primary">
+            <DialogTitle className="text-center font-bold">Join Room</DialogTitle>
+            <div className="grid gap-4 py-4">
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="name" className="text-right">
+              Enter Name
+            </Label>
+            <Input id="name"  className="col-span-3" />
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="roomID" className="text-right font-bold">
+              Enter Room ID
+            </Label>
+            <Input id="roomId" className="col-span-3" />
+          </div>
+        </div>
+            </DialogContent>
+          </Dialog>
+
+        </div>
+      </div>
       </main>
     </div>
   );
