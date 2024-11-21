@@ -14,21 +14,15 @@ const geistMono = localFont({
 });
 
 const pencilFont = localFont({
-  src: "/fonts/pencil.ttf", 
-  variable: "--font-pencil", 
-  weight: "100 900", 
-  style: "normal", 
+  src: "/fonts/pencil.ttf",
+  variable: "--font-pencil",
+  weight: "100 300 500 900",
+  style: "normal",
 });
 
 export const metadata: Metadata = {
   title: "Parchi App",
   description: "A sticky notes application",
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 1,
-    userScalable: false,
-  },
 };
 
 export default function RootLayout({
