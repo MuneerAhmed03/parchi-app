@@ -3,7 +3,7 @@ import UserCard from "./user-card";
 import Header from "./header";
 import StatusBar from "./status-bar";
 
-const players = [
+export const players = [
   { id: 1, name: "Avi", avtar: "/user-avtars/avtar1.png", ready: false },
   { id: 2, name: "Paneer", avtar: "/user-avtars/avtar2.png", ready: true },
   { id: 3, name: "Thevy", avtar: "/user-avtars/avtar3.png", ready: false },

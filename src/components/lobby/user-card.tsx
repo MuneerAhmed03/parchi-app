@@ -2,7 +2,7 @@
 import Image from "next/image";
 import React, { FC } from "react";
 
-interface UserCardProps {
+export interface UserCardProps {
   playerName: string;
   playerAvtar: string;
   playerStatus: boolean;
