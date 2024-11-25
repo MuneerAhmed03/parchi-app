@@ -14,11 +14,11 @@ const LobbyComponent = () => {
   const getRandomTilt = () => Math.random() * 4 - 2; // Random angle between -2 and 2 degrees
 
   return (
-    <div className="bg-[#ffa726] py-5 flex flex-col justify-around gap-5 overflow-hidden w-screen h-screen">
+    <div className="bg-[#ffa726] px-3 py-5 flex flex-col justify-around gap-5 overflow-hidden w-screen h-screen">
       {/* Header */}
       <Header />
       {/* User Cards */}
-      <div className="grid grid-cols-2 gap-5 w-fit mx-auto">
+      <div className="grid gap-3 grid-cols-1 p-2 md:grid-cols-2 lg:gap-5 justify-center place-items-center w-full md:w-fit mx-auto max-md:overflow-y-auto">
         {players.map((player) => (
           <UserCard key={player.id} playerName={player.name} playerAvtar={player.avtar} playerStatus={player.ready} tilt={getRandomTilt()} />
         ))}
