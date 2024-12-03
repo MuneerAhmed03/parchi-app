@@ -57,7 +57,7 @@ export default function Home() {
               </DialogContent>
             </Dialog>
             <Dialog>
-              <DialogTrigger className="bg-white border-2 border-zinc-600 px-4 py-2   -rotate-6 rounded-lg shadow-md text-primary hover:bg-gray-100 transition-colors justify-items-stretch min-w-36 min-h-12">Join Room</DialogTrigger>
+              <DialogTrigger className="bg-white border-2 border-zinc-600 px-4 py-2 -rotate-6 rounded-lg shadow-md text-primary hover:bg-gray-100 transition-colors justify-items-stretch min-w-36 min-h-12">Join Room</DialogTrigger>
               <DialogContent className="bg-white font-pencil text-primary">
                 <DialogTitle className="text-center font-bold">Join Room</DialogTitle>
                 <div className="grid gap-4 place-items-center py-4">

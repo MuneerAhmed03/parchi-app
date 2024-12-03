@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { RoomProvider } from "@/lib/RoomContext";
+import { WebSocketProvider } from "@/context/RoomContext";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -40,7 +41,7 @@ export default function RootLayout({
         className={`
           ${pencilFont.variable} ${geistSans.variable} ${geistMono.variable} antialiased min-h-screen`}
       >
-        <RoomProvider>{children}</RoomProvider>
+        <WebSocketProvider>{children}</WebSocketProvider>
       </body>
     </html>
   );
