@@ -12,7 +12,6 @@ interface Player {
   title: string | null;
 }
 
-
 const avatars = ["/user-avtars/avtar1.png","/user-avtars/avtar2.png","/user-avtars/avtar3.png","/user-avtars/avtar4.png"]
 
 const LobbyComponent = () => {
@@ -61,14 +60,17 @@ const LobbyComponent = () => {
               key={player.playerId}
               playerName={player.playerName}
               playerAvtar={avatars[Math.floor(Math.random()*5)]}
-              playerStatus={!!player.title} // Ready if title is not null
+              playerStatus={player.title} 
               tilt={getRandomTilt()}
+              playerIndex={index}
+              {...(isConnected?{handleSubmit:sendMessage}:{})}
             />
           ) : (
             <UserCard
               key={index}
-              playerName="Waiting for user"
-              playerStatus={false} // Ready if title is not null
+              playerName={null}
+              playerStatus={null} 
+              playerIndex={index}
               tilt={getRandomTilt()}
             />
           )
