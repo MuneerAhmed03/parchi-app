@@ -5,11 +5,104 @@ import StackedParchi from "@/components/StackedParchi";
 import { FiMenu } from "react-icons/fi";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import React, { useState } from "react";
+import { useWebSocketContext } from "@/context/RoomContext";
+import { createRoom, joinRoom } from "@/lib/rooms";
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
+  const router = useRouter();
+  const [createRoomForm, setCreateRoomForm] = useState({
+    name: ''
+  });
+
+  const [joinRoomForm, setJoinRoomForm] = useState({
+    name: '',
+    roomId: ''
+  });
+  const { isConnected, sendMessage } = useWebSocketContext();
+
+  const handleInputChange = (formType: 'create' | 'join', field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (formType === 'create') {
+      setCreateRoomForm(prev => ({
+        ...prev,
+        [field]: e.target.value
+      }));
+    } else {
+      setJoinRoomForm(prev => ({
+        ...prev,
+        [field]: e.target.value
+      }));
+    }
+  };
+
+  const handleCreateRoom = async () => {
+    try {
+      const roomId = await createRoom(createRoomForm.name);
+
+      console.log("room id: ", roomId);
+
+      const playerId = localStorage.getItem('playerId');
+      if (!playerId) {
+        throw new Error("Player Id is missing");
+      }
+
+      if (!isConnected) {
+        console.log("ws not connected");
+        return true;
+      }
+
+      const result = await sendMessage({
+        type: "join_room",
+        roomId,
+        playerId
+      });
+
+      if (result) {
+        router.push('/lobby');
+      }
+    } catch (error) {
+      console.error("Error creating room :", error)
+    }
+  };
+
+
+
+
+  const handleJoinRoom = async () => {
+    try{
+
+      const success = await joinRoom(joinRoomForm.name, joinRoomForm.roomId);
+
+      const playerId = localStorage.getItem('playerId');
+      if (!playerId) {
+        throw new Error("Player Id is missing");
+      }
+
+
+      if(!isConnected){
+        console.log("ws not connected");
+        return true;
+      }
+
+      const result = sendMessage({
+        type: "join_room",
+        playerId
+      })
+
+      if(result){
+        router.push('/lobby')
+      }
+
+    }catch(error){
+      console.error("Error joining room :", error)
+    }
+
+    
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <header className="w-full relative flex justify-center items-center py-4">
@@ -50,9 +143,14 @@ export default function Home() {
                     <Label htmlFor="name" className="text-right font-bold">
                       Enter Name
                     </Label>
-                    <Input id="name" className="col-span-3" />
+                    <Input
+                      id="name"
+                      className="col-span-3"
+                      value={createRoomForm.name}
+                      onChange={handleInputChange('create', 'name')}
+                    />
                   </div>
-                  <button className="w-full">Create Room</button>
+                  <button className="w-full" onClick={handleCreateRoom}>Create Room</button>
                 </div>
               </DialogContent>
             </Dialog>
@@ -65,15 +163,25 @@ export default function Home() {
                     <Label htmlFor="name" className="text-right font-bold">
                       Enter Name
                     </Label>
-                    <Input id="name" className="col-span-3" />
+                    <Input
+                      id="name"
+                      className="col-span-3"
+                      value={joinRoomForm.name}
+                      onChange={handleInputChange('join', 'name')}
+                    />
                   </div>
                   <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="roomID" className="text-right font-bold">
                       Enter Room ID
                     </Label>
-                    <Input id="roomId" className="col-span-3" />
+                    <Input
+                      id="roomId"
+                      className="col-span-3"
+                      value={joinRoomForm.roomId}
+                      onChange={handleInputChange('join', 'roomId')}
+                    />
                   </div>
-                  <button className="w-full">Join Room</button>
+                  <button className="w-full" onClick={handleJoinRoom}>Join Room</button>
                 </div>
               </DialogContent>
             </Dialog>

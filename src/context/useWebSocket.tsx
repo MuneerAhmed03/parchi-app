@@ -9,8 +9,10 @@ const useWebSocket=(url:string)=>{
     const sendMessage = (message:any) =>{
         if(ws && ws.readyState == WebSocket.OPEN){
             ws.send(JSON.stringify(message));
+            return true;
         }else{
             console.warn("WebSocket is not open");
+            return false;
         }
     };
 
@@ -27,6 +29,7 @@ const useWebSocket=(url:string)=>{
             socket.onmessage=(event)=>{
                 console.log("Message Received: ",event.data);
                 const message= JSON.parse(event.data);
+                console.log(message);
                 if(message==='ping'){
                     socket.send('pong')
                 }
@@ -53,7 +56,7 @@ const useWebSocket=(url:string)=>{
         };
     },[url])
 
-    return {isConnected,messages,sendMessage};
+    return {isConnected,messages, sendMessage};
 };
 
 export default useWebSocket;

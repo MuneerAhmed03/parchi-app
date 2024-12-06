@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import { RoomProvider } from "@/lib/RoomContext";
 import { WebSocketProvider } from "@/context/RoomContext";
 
 const geistSans = localFont({

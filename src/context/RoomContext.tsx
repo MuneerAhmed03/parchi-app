@@ -5,13 +5,13 @@ import useWebSocket from './useWebSocket';
 interface WebSocketContextType{
     isConnected :boolean;
     messages:any[];
-    sendMessage:(message:any)=>void;
+    sendMessage:(message:any)=>boolean;
 }
 
 const WebSocketContext=createContext<WebSocketContextType | undefined>(undefined);
 
 export const WebSocketProvider:React.FC<{children:ReactNode}>=({children}) =>{
-    const {isConnected,messages,sendMessage}=useWebSocket("ws://localhost:3000");
+    const {isConnected,messages,sendMessage}=useWebSocket("ws://localhost:8080");
 
     return (
         <WebSocketContext.Provider value={{isConnected,messages,sendMessage}}>
