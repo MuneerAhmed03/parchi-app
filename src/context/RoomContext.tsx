@@ -1,20 +1,28 @@
 "use client";
-import React , {createContext,useContext,ReactNode} from 'react';
+import React , {createContext,useContext,ReactNode,useRef,useState} from 'react';
 import useWebSocket from './useWebSocket';
+import { LargeNumberLike } from 'crypto';
 
 interface WebSocketContextType{
     isConnected :boolean;
     messages:any[];
     sendMessage:(message:any)=>boolean;
+    lastProcessedEventIndex : number;
+    updateLastProcessedEventIndex: (index:number)=>void;
 }
 
 const WebSocketContext=createContext<WebSocketContextType | undefined>(undefined);
 
 export const WebSocketProvider:React.FC<{children:ReactNode}>=({children}) =>{
-    const {isConnected,messages,sendMessage}=useWebSocket("ws://localhost:8080");
+    const {isConnected,messages,sendMessage}=useWebSocket("ws://localhost:8081");
+    const[lastProcessedEventIndex,setLastProcessedEventIndex]=useState<number>(-1);
+
+    const updateLastProcessedEventIndex = (index:number)=>{
+        setLastProcessedEventIndex(index);
+    }
 
     return (
-        <WebSocketContext.Provider value={{isConnected,messages,sendMessage}}>
+        <WebSocketContext.Provider value={{isConnected,messages,sendMessage,lastProcessedEventIndex,updateLastProcessedEventIndex}}>
             {children}
         </WebSocketContext.Provider>
     )

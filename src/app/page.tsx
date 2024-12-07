@@ -7,7 +7,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useWebSocketContext } from "@/context/RoomContext";
 import { createRoom, joinRoom } from "@/lib/rooms";
 import { useRouter } from 'next/navigation';
@@ -22,7 +22,12 @@ export default function Home() {
     name: '',
     roomId: ''
   });
-  const { isConnected, sendMessage } = useWebSocketContext();
+  const { 
+    isConnected,
+    messages,
+    sendMessage,
+    lastProcessedEventIndex,
+    updateLastProcessedEventIndex } = useWebSocketContext();
 
   const handleInputChange = (formType: 'create' | 'join', field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
     if (formType === 'create') {
@@ -59,22 +64,16 @@ export default function Home() {
         roomId,
         playerId
       });
-
-      if (result) {
-        router.push('/lobby');
-      }
+      console.log("send message result:",result);
     } catch (error) {
       console.error("Error creating room :", error)
     }
   };
 
-
-
-
   const handleJoinRoom = async () => {
     try{
 
-      const success = await joinRoom(joinRoomForm.name, joinRoomForm.roomId);
+      const success = await joinRoom(joinRoomForm.roomId, joinRoomForm.name);
 
       const playerId = localStorage.getItem('playerId');
       if (!playerId) {
@@ -89,19 +88,33 @@ export default function Home() {
 
       const result = sendMessage({
         type: "join_room",
+        roomId:joinRoomForm.roomId,
         playerId
       })
-
-      if(result){
-        router.push('/lobby')
-      }
 
     }catch(error){
       console.error("Error joining room :", error)
     }
-
-    
   };
+
+  useEffect(() => {
+    if (messages.length > lastProcessedEventIndex + 1) {
+      for (let i = lastProcessedEventIndex + 1; i < messages.length; i++) {
+        const message = messages[i];
+        if (message.type === "lobby") {
+          setTimeout(() => {}, 1000);
+          localStorage.setItem("players", JSON.stringify(message.data));
+          router.push("/lobby");
+          updateLastProcessedEventIndex(i);
+          console.log(lastProcessedEventIndex);
+          break;
+        }else{
+          console.log("messagefrom page.tsx",message);
+        }
+      }
+      updateLastProcessedEventIndex(messages.length - 1);
+    }
+  }, [messages, lastProcessedEventIndex, updateLastProcessedEventIndex]);
 
   return (
     <div className="min-h-screen flex flex-col">

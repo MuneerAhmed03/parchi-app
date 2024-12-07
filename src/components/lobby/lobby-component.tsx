@@ -5,6 +5,7 @@ import Header from "./header";
 import StatusBar from "./status-bar";
 import { useWebSocketContext } from "@/context/RoomContext";
 import { useRouter } from "next/navigation";
+import { title } from "process";
 
 interface Player {
   playerName: string;
@@ -16,37 +17,54 @@ const avatars = ["/user-avtars/avtar1.png","/user-avtars/avtar2.png","/user-avta
 
 const LobbyComponent = () => {
   const getRandomTilt = () => Math.random() * 4 - 2;
-  const { isConnected, messages, sendMessage } = useWebSocketContext();
+  const { 
+    isConnected, 
+    messages, 
+    sendMessage, 
+    lastProcessedEventIndex,
+    updateLastProcessedEventIndex 
+  } = useWebSocketContext();
   const router = useRouter();
-  const [players, setPlayers] = useState<Player[]>([
-    {
-      playerName: 'Alice',
-      playerId: 'player1',
-      title: 'Champion',
-    },
-    {
-      playerName: 'Bob',
-      playerId: 'player2',
-      title: null,
-    },
-  ]);
+  const [players, setPlayers] = useState<Player[]>([]);
 
-  const lastEventRef = useRef<number>(-1);
+  useEffect(()=>{
+    const playerListString = localStorage.getItem('players');
+    if(!playerListString){
+      console.log("local storage empty");
+      return;
+    }
+    const playerList = JSON.parse(playerListString);
+    const updatedPlayers = playerList?.map((player: { name: string; id: string }) => ({
+      playerName: player.name,
+      playerId: player.id,
+      title: null
+    }));
+    setPlayers(updatedPlayers);
+  },[])
 
   useEffect(() => {
-    if (messages.length > lastEventRef.current + 1) {
-      for (let i = lastEventRef.current + 1; i < messages.length; i++) {
+    if (messages.length > lastProcessedEventIndex + 1) {
+      for (let i = lastProcessedEventIndex + 1; i < messages.length; i++) {
         const message = messages[i];
         if (message.type === "lobby") {
-          setPlayers(message.data); // Assuming `message.data` is an array of players
-        } else if (message.type === "game_start") {
+          setPlayers(message.data);
+        }else if(message.type ==="title_submit"){
+          const id = message.data.playerId;
+          const updatedPlayers = players.map(player=>
+            player.playerId == id ? {...player,title:message.data.title} : player
+          )
+          setPlayers(updatedPlayers);
+        }
+        else if (message.type === "game_start") {
           setTimeout(() => {}, 1000);
           router.push("/game");
+          updateLastProcessedEventIndex(i);
+          break;
         }
       }
-      lastEventRef.current = messages.length - 1;
+      updateLastProcessedEventIndex(messages.length - 1);
     }
-  }, [messages, router]);
+  }, [messages, router, lastProcessedEventIndex, updateLastProcessedEventIndex]);
 
   const playerSlots = Array.from({ length: 4 }, (_, index) => players[index] || null);
 

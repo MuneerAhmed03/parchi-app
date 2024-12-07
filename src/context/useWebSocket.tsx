@@ -7,6 +7,7 @@ const useWebSocket=(url:string)=>{
     const ws=socketref?.current;
 
     const sendMessage = (message:any) =>{
+        console.log("send Messahge called: ", message);
         if(ws && ws.readyState == WebSocket.OPEN){
             ws.send(JSON.stringify(message));
             return true;
@@ -29,7 +30,7 @@ const useWebSocket=(url:string)=>{
             socket.onmessage=(event)=>{
                 console.log("Message Received: ",event.data);
                 const message= JSON.parse(event.data);
-                console.log(message);
+                console.log("on message recieved",message);
                 if(message==='ping'){
                     socket.send('pong')
                 }
