@@ -5,8 +5,9 @@ import Header from "./header";
 import StatusBar from "./status-bar";
 import { useWebSocketContext } from "@/context/RoomContext";
 import { useRouter } from "next/navigation";
-import { title } from "process";
-
+import {savePlayerView} from "@/store/indexedDB"
+import { PlayerView } from "@/lib/types";
+ 
 interface Player {
   playerName: string;
   playerId: string;
@@ -26,6 +27,7 @@ const LobbyComponent = () => {
   } = useWebSocketContext();
   const router = useRouter();
   const [players, setPlayers] = useState<Player[]>([]);
+  const [playerid,setPlayerid] = useState<string|null>(null);
 
   useEffect(()=>{
     const playerListString = localStorage.getItem('players');
@@ -33,32 +35,46 @@ const LobbyComponent = () => {
       console.log("local storage empty");
       return;
     }
+    const playeruuid = localStorage.getItem('playerId')
+    if(!playeruuid){
+      console.log("local storage empty");
+      return;
+    }
+    setPlayerid(playeruuid);
     const playerList = JSON.parse(playerListString);
-    const updatedPlayers = playerList?.map((player: { name: string; id: string }) => ({
+    //@ts-ignore
+    const updatedPlayers = playerList?.map((player) => ({
       playerName: player.name,
       playerId: player.id,
-      title: null
+      title: player.title
     }));
     setPlayers(updatedPlayers);
   },[])
 
   useEffect(() => {
+    const saveToDB = async (playerView:PlayerView) => {
+      await savePlayerView(playerView);
+      console.log("saved to index");
+    }
     if (messages.length > lastProcessedEventIndex + 1) {
       for (let i = lastProcessedEventIndex + 1; i < messages.length; i++) {
         const message = messages[i];
         if (message.type === "lobby") {
-          setPlayers(message.data);
-        }else if(message.type ==="title_submit"){
-          const id = message.data.playerId;
-          const updatedPlayers = players.map(player=>
-            player.playerId == id ? {...player,title:message.data.title} : player
-          )
-          setPlayers(updatedPlayers);
-        }
-        else if (message.type === "game_start") {
+          //@ts-ignore
+          const updatePlayers : Player[]= message.data.map((item)=>({
+            playerName: item.name,
+            playerId: item.id,
+            title: item.title,
+          }))
+
+          setPlayers(updatePlayers);
+        }else if (message.type === "game_start") {
           setTimeout(() => {}, 1000);
-          router.push("/game");
-          updateLastProcessedEventIndex(i);
+          saveToDB(message.data).then(()=>{
+            updateLastProcessedEventIndex(messages.length - 1);
+            router.push("/game");
+          });
+          console.log("break loggesd");
           break;
         }
       }
@@ -67,6 +83,8 @@ const LobbyComponent = () => {
   }, [messages, router, lastProcessedEventIndex, updateLastProcessedEventIndex]);
 
   const playerSlots = Array.from({ length: 4 }, (_, index) => players[index] || null);
+
+  const currentIndex = playerSlots.findIndex(player => player?.playerId === playerid);
 
   return (
     <div className="bg-[#ffa726] px-3 py-5 flex flex-col justify-around gap-5 overflow-hidden w-screen h-screen">
@@ -80,7 +98,7 @@ const LobbyComponent = () => {
               playerAvtar={avatars[Math.floor(Math.random()*5)]}
               playerStatus={player.title} 
               tilt={getRandomTilt()}
-              playerIndex={index}
+              isCurrentPlayer={index === currentIndex}
               {...(isConnected?{handleSubmit:sendMessage}:{})}
             />
           ) : (
@@ -88,7 +106,7 @@ const LobbyComponent = () => {
               key={index}
               playerName={null}
               playerStatus={null} 
-              playerIndex={index}
+              isCurrentPlayer={false}
               tilt={getRandomTilt()}
             />
           )

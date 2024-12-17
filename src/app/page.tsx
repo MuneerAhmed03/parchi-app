@@ -46,8 +46,9 @@ export default function Home() {
   const handleCreateRoom = async () => {
     try {
       const roomId = await createRoom(createRoomForm.name);
-
+      localStorage.setItem('roomId',roomId)
       console.log("room id: ", roomId);
+      
 
       const playerId = localStorage.getItem('playerId');
       if (!playerId) {
@@ -58,7 +59,6 @@ export default function Home() {
         console.log("ws not connected");
         return true;
       }
-
       const result = await sendMessage({
         type: "join_room",
         roomId,

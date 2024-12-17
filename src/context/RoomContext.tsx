@@ -14,7 +14,7 @@ interface WebSocketContextType{
 const WebSocketContext=createContext<WebSocketContextType | undefined>(undefined);
 
 export const WebSocketProvider:React.FC<{children:ReactNode}>=({children}) =>{
-    const {isConnected,messages,sendMessage}=useWebSocket("ws://localhost:8081");
+    const {isConnected,messages,sendMessage}=useWebSocket("ws://localhost:8082");
     const[lastProcessedEventIndex,setLastProcessedEventIndex]=useState<number>(-1);
 
     const updateLastProcessedEventIndex = (index:number)=>{

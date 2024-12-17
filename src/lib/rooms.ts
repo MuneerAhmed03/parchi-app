@@ -1,7 +1,6 @@
-import local from "next/font/local";
 import { v4 as uuidv4 } from "uuid";
 
-const BASE_URL = 'http://localhost:8081';
+const BASE_URL = 'http://localhost:8082';
 
 export const createRoom = async (playerName: string): Promise<string> => {
     const apiUrl = `${BASE_URL}/create-room`;
@@ -25,6 +24,7 @@ export const createRoom = async (playerName: string): Promise<string> => {
             throw new Error(`Failed to create room: ${errorMessage}`);
         }
         localStorage.setItem('playerId', playerId);
+        
         return await response.text();
     } catch (error) {
         console.error("Error creating room:", error);
@@ -49,6 +49,7 @@ export const joinRoom = async (roomId: string, playerName: string): Promise<{ su
             throw new Error(`Failed to join room: ${errorMessage}`);
         }
         localStorage.setItem('playerId', playerId);
+        localStorage.setItem('roomId', roomId);
         return await response.json();
     } catch (error) {
         console.error("Error joining room:", error);

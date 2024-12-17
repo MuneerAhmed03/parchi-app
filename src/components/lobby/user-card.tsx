@@ -10,10 +10,10 @@ export interface UserCardProps {
   playerStatus: string | null;
   tilt: number;
   handleSubmit?: (message: any) => void;
-  playerIndex: number;
+  isCurrentPlayer: boolean;
 }
 
-const UserCard: FC<UserCardProps> = ({ playerName, playerAvtar, playerStatus, tilt, handleSubmit, playerIndex }) => {
+const UserCard: FC<UserCardProps> = ({ playerName, playerAvtar, playerStatus, tilt, handleSubmit, isCurrentPlayer }) => {
   const [title, setTitle] = useState<string | null>(playerStatus);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -21,10 +21,20 @@ const UserCard: FC<UserCardProps> = ({ playerName, playerAvtar, playerStatus, ti
   };
 
   const handleButtonClick = () => {
+    const roomId = localStorage.getItem('roomId');
+    const playeruuid = localStorage.getItem('playerId')
+
+    if(!roomId || !playeruuid){
+      console.log("local storage empty");
+      return;
+    }
     if (handleSubmit) {
       handleSubmit({
         type: "submit_title",
-        data: { title },
+        data: { 
+          title,
+          roomId,
+          playerId:playeruuid},
       });
     }
   };
@@ -57,7 +67,7 @@ const UserCard: FC<UserCardProps> = ({ playerName, playerAvtar, playerStatus, ti
       </p>
       {playerName && (
         <>
-          {playerIndex === 0 ? (
+          {isCurrentPlayer ? (
             playerStatus === null ? (
               <Dialog>
                 <DialogTrigger

@@ -7,6 +7,10 @@ interface ParchiProps {
   setSelectedPlayer: (id: number | null) => void;
 }
 
+interface ParchiProp {
+  
+}
+
 const Parchi: FC<ParchiProps> = ({ playerId, selectedPlayer, setSelectedPlayer }) => {
   const isSelected = selectedPlayer === playerId; // Check if this Parchi is selected
 
