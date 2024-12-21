@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import React, { useEffect, useState } from "react";
 import { useWebSocketContext } from "@/context/RoomContext";
+import { useGameContext } from "@/context/GameContext";
 import { createRoom, joinRoom } from "@/lib/rooms";
 import { useRouter } from 'next/navigation';
 
@@ -23,11 +24,19 @@ export default function Home() {
     roomId: ''
   });
   const { 
+    handleConnect,
+    handleDisconnect,
     isConnected,
     messages,
     sendMessage,
     lastProcessedEventIndex,
     updateLastProcessedEventIndex } = useWebSocketContext();
+
+  const {
+    handlePlayerId,
+    handleRoomId,
+    handlePlayers
+  } =useGameContext();
 
   const handleInputChange = (formType: 'create' | 'join', field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
     if (formType === 'create') {
@@ -45,16 +54,19 @@ export default function Home() {
 
   const handleCreateRoom = async () => {
     try {
-      const roomId = await createRoom(createRoomForm.name);
-      localStorage.setItem('roomId',roomId)
-      console.log("room id: ", roomId);
-      
+      const{playerId,roomId} = await createRoom(createRoomForm.name);
 
-      const playerId = localStorage.getItem('playerId');
+
+
+      // const playerId = localStorage.getItem('playerId');
       if (!playerId) {
         throw new Error("Player Id is missing");
       }
 
+      handleRoomId(roomId);
+      handlePlayerId(playerId);
+
+      await handleConnect();
       if (!isConnected) {
         console.log("ws not connected");
         return true;
@@ -75,8 +87,8 @@ export default function Home() {
 
       const success = await joinRoom(joinRoomForm.roomId, joinRoomForm.name);
 
-      const playerId = localStorage.getItem('playerId');
-      if (!playerId) {
+      
+      if (!success.playerId) {
         throw new Error("Player Id is missing");
       }
 
@@ -86,10 +98,13 @@ export default function Home() {
         return true;
       }
 
+      handleRoomId(success.roomId);
+      handlePlayerId(success.playerId);
+
       const result = sendMessage({
         type: "join_room",
         roomId:joinRoomForm.roomId,
-        playerId
+        playerId : success.playerId
       })
 
     }catch(error){
@@ -104,6 +119,13 @@ export default function Home() {
         if (message.type === "lobby") {
           setTimeout(() => {}, 1000);
           localStorage.setItem("players", JSON.stringify(message.data));
+          //@ts-ignore
+          const updatedPlayers = message.data?.map((player) => ({
+            playerName: player.name,
+            playerId: player.id,
+            title: player.title
+          }));
+          handlePlayers(updatedPlayers);
           router.push("/lobby");
           updateLastProcessedEventIndex(i);
           console.log(lastProcessedEventIndex);

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { WebSocketProvider } from "@/context/RoomContext";
+import { GameContextProvider } from "@/context/GameContext";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -40,7 +41,9 @@ export default function RootLayout({
         className={`
           ${pencilFont.variable} ${geistSans.variable} ${geistMono.variable} antialiased min-h-screen`}
       >
+        <GameContextProvider>
         <WebSocketProvider>{children}</WebSocketProvider>
+        </GameContextProvider>
       </body>
     </html>
   );

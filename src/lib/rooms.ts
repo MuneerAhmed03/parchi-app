@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from "uuid";
 
 const BASE_URL = 'http://localhost:8082';
 
-export const createRoom = async (playerName: string): Promise<string> => {
+export const createRoom = async (playerName: string): Promise<{roomId:string,playerId:string}> => {
     const apiUrl = `${BASE_URL}/create-room`;
     const playerId = uuidv4();
     const data = {
@@ -23,16 +23,19 @@ export const createRoom = async (playerName: string): Promise<string> => {
             const errorMessage = await response.text();
             throw new Error(`Failed to create room: ${errorMessage}`);
         }
-        localStorage.setItem('playerId', playerId);
-        
-        return await response.text();
+        // localStorage.setItem('playerId', playerId);
+        const roomId = await response.text();
+        return {
+            roomId,
+            playerId
+        }
     } catch (error) {
         console.error("Error creating room:", error);
         throw error;
     }
 };
 
-export const joinRoom = async (roomId: string, playerName: string): Promise<{ success: boolean }> => {
+export const joinRoom = async (roomId: string, playerName: string): Promise<{roomId:string,playerId:string}> => {
     const apiUrl = `${BASE_URL}/join-room`;
     const playerId = uuidv4();
     try {
@@ -48,9 +51,11 @@ export const joinRoom = async (roomId: string, playerName: string): Promise<{ su
             const errorMessage = await response.text();
             throw new Error(`Failed to join room: ${errorMessage}`);
         }
-        localStorage.setItem('playerId', playerId);
-        localStorage.setItem('roomId', roomId);
-        return await response.json();
+        
+        return {
+            roomId,
+            playerId
+        }
     } catch (error) {
         console.error("Error joining room:", error);
         throw error;

@@ -19,6 +19,8 @@ const avatars = ["/user-avtars/avtar1.png","/user-avtars/avtar2.png","/user-avta
 const LobbyComponent = () => {
   const getRandomTilt = () => Math.random() * 4 - 2;
   const { 
+    handleConnect,
+    handleDisconnect,
     isConnected, 
     messages, 
     sendMessage, 
