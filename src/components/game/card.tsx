@@ -3,15 +3,18 @@ import React from 'react';
 interface CardProps {
   value: string;
   selected?: boolean;
+  isTurn:boolean
   onClick?: () => void;
 }
 
-export function Card({ value, selected = false, onClick }: CardProps) {
-  console.log("[Card] Rendering:", { value, selected });
+export function Card({ value, selected = false, onClick,isTurn }: CardProps) {
+
   
   return (
     <div
-      onClick={onClick}
+      onClick={isTurn? onClick : ()=> {
+        console.log("getting clicked without turn")
+        return}}
       className={`
         w-16 md:w-24
         h-24 md:h-36

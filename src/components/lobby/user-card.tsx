@@ -82,6 +82,8 @@ const UserCard: FC<UserCardProps> = ({ playerName, playerAvtar, playerStatus, ti
                       className="w-full font-semibold text-center"
                       value={title || ""}
                       onChange={handleChange}
+                      autoComplete="off"
+                      aria-autocomplete="none"
                     />
                     <button className="w-full" onClick={handleButtonClick}>
                       Submit

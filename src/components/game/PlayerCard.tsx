@@ -11,7 +11,6 @@ interface PlayerCardProps {
 const avatars = ["/user-avtars/avtar1.png", "/user-avtars/avtar2.png", "/user-avtars/avtar3.png", "/user-avtars/avtar4.png"];
 
 export function PlayerCard({ name, isCurrentPlayer = false, position }: PlayerCardProps) {
-  console.log("[PlayerCard] Rendering:", { name, isCurrentPlayer, position });
   
   const positionStyles = {
     top: 'top-4 left-1/2 -translate-x-1/2',

@@ -9,8 +9,13 @@ import WinnerModal from "./winner-modal";
 
 const positions = ['left', 'top', 'right']
 
+const checkWinning = (cards: { title: string; id: string }[]) => {
+  return cards.every(card => card.title === cards[0].title)
+}
+
 export default function GameTable() {
   const {
+    roomId,
     playerId,
     currentPlayerView,
     handlePlayerView
@@ -27,12 +32,13 @@ export default function GameTable() {
   const [cards,setCards] = useState<{ title: string; id: string }[]>([]);
   const [gameState, setGameState] = useState<PlayerView>();
   const [showWinnerModal, setShowWinnerModal] = useState(false);
+  const [isWinning,setIsWinning]= useState<boolean>(false);
   const [winner, setWinner] = useState("");
   const [board,setBoard] = useState<Player[]>([]);
 
   useEffect(() => {
     const mountGame = async () => {
-      console.log("[GameTable] Mounting game with currentPlayerView:", currentPlayerView);
+      
       
       const playerView = currentPlayerView;
       if (!playerView) {
@@ -40,38 +46,26 @@ export default function GameTable() {
         return;
       }
 
-      console.log("[GameTable] Setting up board with players:", playerView.players);
-      console.log("[GameTable] Player index:", playerView.playerIndex);
-      
+
       const boardSetup = [...playerView.players.slice(playerView.playerIndex), ...playerView.players.slice(0, playerView.playerIndex)];
-      console.log("[GameTable] Board setup result:", boardSetup);
-      
+
       setBoard(boardSetup);
       setCards(playerView.hand);
-      console.log("[GameTable] Initial hand:", playerView.hand);
-      
       setGameState(playerView);
+      setIsWinning(checkWinning(playerView.hand))
     }
     mountGame();
   }, [currentPlayerView]);
 
   useEffect(() => {
-    console.log("[GameTable] Current board state:", board);
-    console.log("[GameTable] Current cards:", cards);
-    console.log("[GameTable] Current gameState:", gameState);
-  }, [board, cards, gameState]);
-
-  useEffect(() => {
     if (messages.length > lastProcessedEventIndex + 1) {
-      console.log("[GameTable] Processing new messages:", 
-        messages.slice(lastProcessedEventIndex + 1));
         
       for (let i = lastProcessedEventIndex + 1; i < messages.length; i++) {
         const message = messages[i];
         if (message.type === "gameState") {
           //@ts-ignore
           const updateGameState = message.data;
-          setGameState(updateGameState);
+          // setGameState(updateGameState);
           handlePlayerView(updateGameState);
         } else if (message.type === "game_end") {
           const winnerName = message.winner;
@@ -85,8 +79,17 @@ export default function GameTable() {
     }
   }, [messages, lastProcessedEventIndex, updateLastProcessedEventIndex]);
 
-  console.log("[GameTable] Rendering with board:", board);
-  console.log("[GameTable] Number of players to render:", board.slice(1).length);
+
+  const handlePass = (cardIndex:number)=>{
+
+    sendMessage({
+      type:"play_card",
+        roomId,
+        playerId,
+        cardIndex
+      }
+    )
+  }
 
   return (
     <div
@@ -113,15 +116,10 @@ export default function GameTable() {
       " /> */}
 
       {board.slice(1).map((player, index) =>{
-
         const isCurrentPlayer = gameState ? 
         (gameState.currentPlayerIndex - gameState.playerIndex + 4) % 4 === index + 1 
         : false;
         
-        if (gameState) {
-          console.log("[GameTable] isCurrentPlayer?:", isCurrentPlayer);
-          console.log("[GameTable] the index of player on the board",(gameState.currentPlayerIndex  - gameState.playerIndex + 4) % 4 )
-        }
 
         return (
           <PlayerCard
@@ -135,6 +133,7 @@ export default function GameTable() {
 
       {/* Pass button */}
       <button
+        onClick={() => selectedCard !== null ? handlePass(selectedCard) : undefined}
         className="
           bg-white/90
           backdrop-blur-sm
@@ -155,13 +154,15 @@ export default function GameTable() {
           disabled:hover:scale-100
           disabled:cursor-not-allowed
         "
-        disabled={!selectedCard}
+        disabled={selectedCard===null && !isWinning}
       >
-        Pass Card
+        {isWinning? "Claim Win" : "Pass Card"}
       </button>
 
       {/* Current player's cards */}
-      <div className="
+      <div
+      id="hand"
+       className="
         absolute 
         bottom-2 md:bottom-4 
         left-1/2 
@@ -178,7 +179,10 @@ export default function GameTable() {
             key={index}
             value={card.title}
             selected={index === selectedCard}
-            onClick={() => setSelectedCard(index === selectedCard ? null : index)}
+            isTurn={gameState?.currentPlayerIndex === gameState?.playerIndex}
+            onClick={() => {
+              setSelectedCard(index === selectedCard ? null : index);
+            }}
           />
         ))}
       </div>

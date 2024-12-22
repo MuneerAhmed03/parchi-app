@@ -197,6 +197,8 @@ export default function Home() {
                       className="col-span-3"
                       value={createRoomForm.name}
                       onChange={handleInputChange('create', 'name')}
+                      autoComplete="off"
+                      aria-autocomplete="none"
                     />
                   </div>
                   <button className="w-full" onClick={handleCreateRoom}>Create Room</button>
@@ -217,6 +219,8 @@ export default function Home() {
                       className="col-span-3"
                       value={joinRoomForm.name}
                       onChange={handleInputChange('join', 'name')}
+                      autoComplete="off"
+                      aria-autocomplete="none"
                     />
                   </div>
                   <div className="grid grid-cols-4 items-center gap-4">
