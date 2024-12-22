@@ -12,6 +12,7 @@ import { useWebSocketContext } from "@/context/RoomContext";
 import { useGameContext } from "@/context/GameContext";
 import { createRoom, joinRoom } from "@/lib/rooms";
 import { useRouter } from 'next/navigation';
+import { PlayerLobby } from "@/lib/types";
 
 export default function Home() {
   const router = useRouter();
@@ -63,20 +64,33 @@ export default function Home() {
         throw new Error("Player Id is missing");
       }
 
+      // await handleConnect();
+
       handleRoomId(roomId);
       handlePlayerId(playerId);
 
-      await handleConnect();
-      if (!isConnected) {
+      handleConnect().then(()=>{
+        sendMessage({
+            type: "join_room",
+            roomId,
+            playerId
+          });
+      }).catch((error)=>{
         console.log("ws not connected");
         return true;
-      }
-      const result = await sendMessage({
-        type: "join_room",
-        roomId,
-        playerId
-      });
-      console.log("send message result:",result);
+      })
+
+      // if (!isConnected) {
+      //   console.log("ws not connected");
+      //   return true;
+      // }
+
+
+      // const result = await sendMessage({
+      //   type: "join_room",
+      //   roomId,
+      //   playerId
+      // });
     } catch (error) {
       console.error("Error creating room :", error)
     }
@@ -92,20 +106,20 @@ export default function Home() {
         throw new Error("Player Id is missing");
       }
 
-
-      if(!isConnected){
-        console.log("ws not connected");
-        return true;
-      }
-
       handleRoomId(success.roomId);
       handlePlayerId(success.playerId);
 
-      const result = sendMessage({
-        type: "join_room",
-        roomId:joinRoomForm.roomId,
-        playerId : success.playerId
+      handleConnect().then(()=>{
+        sendMessage({
+          type: "join_room",
+          roomId:joinRoomForm.roomId,
+          playerId : success.playerId
+        })
+      }).catch((error)=>{
+        console.log("ws not connected");
+        return true;
       })
+
 
     }catch(error){
       console.error("Error joining room :", error)
@@ -118,9 +132,9 @@ export default function Home() {
         const message = messages[i];
         if (message.type === "lobby") {
           setTimeout(() => {}, 1000);
-          localStorage.setItem("players", JSON.stringify(message.data));
+          // localStorage.setItem("players", JSON.stringify(message.data));
           //@ts-ignore
-          const updatedPlayers = message.data?.map((player) => ({
+          const updatedPlayers : PlayerLobby[] = message.data?.map((player) => ({
             playerName: player.name,
             playerId: player.id,
             title: player.title

@@ -4,7 +4,7 @@ import useWebSocket from './useWebSocket';
 import { LargeNumberLike } from 'crypto';
 
 interface WebSocketContextType{
-    handleConnect:()=>void;
+    handleConnect:()=>Promise<void>;
     handleDisconnect:()=>void;
     isConnected :boolean;
     messages:any[];
@@ -16,7 +16,7 @@ interface WebSocketContextType{
 const WebSocketContext=createContext<WebSocketContextType | undefined>(undefined);
 
 export const WebSocketProvider:React.FC<{children:ReactNode}>=({children}) =>{
-    const { isConnected, messages, sendMessage, connect, disconnect } = useWebSocket('your-ws-url');
+    const { isConnected, messages, sendMessage, connect, disconnect } = useWebSocket('http://localhost:8082');
     const[lastProcessedEventIndex,setLastProcessedEventIndex]=useState<number>(-1);
 
     const updateLastProcessedEventIndex = (index:number)=>{
@@ -24,8 +24,8 @@ export const WebSocketProvider:React.FC<{children:ReactNode}>=({children}) =>{
     }
 
 
-    const handleConnect = async () => {
-        await connect();
+    const handleConnect = () => {
+        return connect();
     }
     const handleDisconnect = () => {
         disconnect();

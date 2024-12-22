@@ -3,6 +3,7 @@ import Image from "next/image";
 import React, { FC, useState } from "react";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { useGameContext } from "@/context/GameContext";
 
 export interface UserCardProps {
   playerName: string | null;
@@ -15,26 +16,23 @@ export interface UserCardProps {
 
 const UserCard: FC<UserCardProps> = ({ playerName, playerAvtar, playerStatus, tilt, handleSubmit, isCurrentPlayer }) => {
   const [title, setTitle] = useState<string | null>(playerStatus);
+  const {
+    playerId,
+    roomId
+  } = useGameContext();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(event.target.value);
   };
 
   const handleButtonClick = () => {
-    const roomId = localStorage.getItem('roomId');
-    const playeruuid = localStorage.getItem('playerId')
-
-    if(!roomId || !playeruuid){
-      console.log("local storage empty");
-      return;
-    }
     if (handleSubmit) {
       handleSubmit({
         type: "submit_title",
         data: { 
           title,
           roomId,
-          playerId:playeruuid},
+          playerId},
       });
     }
   };

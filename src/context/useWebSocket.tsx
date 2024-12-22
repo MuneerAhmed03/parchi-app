@@ -6,46 +6,112 @@ const useWebSocket=(url:string)=>{
     const socketref = useRef<WebSocket|null>(null);
     const ws=socketref?.current;
 
-    const connect = () => {
+    // const connect = () => {
 
-        return new Promise<void>((resolve,reject)=>{
-            if (socketref.current){ 
-                resolve();
+    //     return new Promise<void>((resolve,reject)=>{
+    //         if (socketref.current && socketref.current.readyState===OPEN){ 
+    //             resolve();
+    //             return;
+    //         }
+
+    //         if (socketref.current && socketref.current.readyState === WebSocket.CONNECTING) {
+    //             // Wait for the existing connection to be established
+    //             socketref.current.addEventListener('open', resolveOnce, { once: true });
+    //             return;
+    //         }
+
+    //     const socket = new WebSocket(url);
+    //     socketref.current = socket;
+
+    //     const resolveOnce = () => {
+    //         if (socket.readyState === WebSocket.OPEN) {
+    //             console.log("ws connected");
+    //             setIsConnected(true);
+    //             resolve();
+    //         }
+    //     };
+
+
+    //     socket.onopen = resolveOnce;
+
+    //     socket.onmessage = (event) => {
+    //         console.log("Message Received: ",event.data);
+    //         const message= JSON.parse(event.data);
+    //         console.log("on message recieved",message);
+    //         if(message==='ping'){
+    //             socket.send('pong')
+    //         }
+    //         setMessages((prev)=>[...prev,message]);
+    //     }
+
+    //     socket.onclose = (event) => {
+    //         console.warn("ws closed:", event.reason);
+    //         setIsConnected(false);
+    //         socketref.current = null;
+    //     }
+
+    //     socket.onerror = (error) => {
+    //         console.log("ws error", error);
+    //         socket.close();
+    //         reject(error);
+    //     }
+    // })
+    // }
+
+    const connect = () => {
+        return new Promise<void>((resolve, reject) => {
+            if (socketref.current) {
+                if (socketref.current.readyState === WebSocket.OPEN) {
+                    resolve();
+                } else if (socketref.current.readyState === WebSocket.CONNECTING) {
+                    const interval = setInterval(() => {
+                        if (socketref.current?.readyState === WebSocket.OPEN) {
+                            clearInterval(interval);
+                            console.log("resolved in checking");
+                            resolve();
+                        }
+                    }, 100); // Poll every 50ms
+                } else {
+                    reject(new Error("WebSocket is not in a valid state to connect."));
+                }
                 return;
             }
-
+    
             const socket = new WebSocket(url);
-        socketref.current = socket;
-
-        socket.onopen = () => {
-            console.log("ws connected");
-            setIsConnected(true);
-            resolve();
-        }
-
-        socket.onmessage = (event) => {
-            console.log("Message Received: ",event.data);
-            const message= JSON.parse(event.data);
-            console.log("on message recieved",message);
-            if(message==='ping'){
-                socket.send('pong')
-            }
-            setMessages((prev)=>[...prev,message]);
-        }
-
-        socket.onclose = (event) => {
-            console.warn("ws closed:", event.reason);
-            setIsConnected(false);
-            socketref.current = null;
-        }
-
-        socket.onerror = (error) => {
-            console.log("ws error", error);
-            socket.close();
-            reject(error);
-        }
-    })
-    }
+            socketref.current = socket;
+    
+            socket.onopen = () => {
+                setIsConnected(true);
+                if (socketref.current?.readyState === WebSocket.OPEN) {
+                    console.log("ws connected");
+                    console.log("resolved in onopen")
+                    resolve();
+                }
+            };
+    
+            socket.onmessage = (event) => {
+                console.log("Message Received: ", event.data);
+                const message = JSON.parse(event.data);
+                if (message === 'ping') {
+                    socket.send('pong');
+                }
+                setMessages((prev) => [...prev, message]);
+            };
+    
+            socket.onclose = (event) => {
+                console.warn("ws closed:", event.reason);
+                setIsConnected(false);
+                socketref.current = null;
+            };
+    
+            socket.onerror = (error) => {
+                console.log("ws error", error);
+                socket.close();
+                reject(error);
+            };
+        });
+    };
+    
 
     const disconnect = () => {
         if (socketref.current) {
@@ -63,8 +129,8 @@ const useWebSocket=(url:string)=>{
 
     const sendMessage = (message:any) =>{
         console.log("send Messahge called: ", message);
-        if(ws && ws.readyState == WebSocket.OPEN){
-            ws.send(JSON.stringify(message));
+        if(socketref.current && socketref.current.readyState == WebSocket.OPEN){
+            socketref.current.send(JSON.stringify(message));
             return true;
         }else{
             console.warn("WebSocket is not open");

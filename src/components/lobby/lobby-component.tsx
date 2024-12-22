@@ -4,53 +4,54 @@ import UserCard from "./user-card";
 import Header from "./header";
 import StatusBar from "./status-bar";
 import { useWebSocketContext } from "@/context/RoomContext";
+import { useGameContext } from "@/context/GameContext";
 import { useRouter } from "next/navigation";
 import {savePlayerView} from "@/store/indexedDB"
-import { PlayerView } from "@/lib/types";
- 
-interface Player {
-  playerName: string;
-  playerId: string;
-  title: string | null;
-}
+import { PlayerView, PlayerLobby } from "@/lib/types";
 
 const avatars = ["/user-avtars/avtar1.png","/user-avtars/avtar2.png","/user-avtars/avtar3.png","/user-avtars/avtar4.png"]
 
 const LobbyComponent = () => {
   const getRandomTilt = () => Math.random() * 4 - 2;
   const { 
-    handleConnect,
-    handleDisconnect,
     isConnected, 
     messages, 
     sendMessage, 
     lastProcessedEventIndex,
     updateLastProcessedEventIndex 
   } = useWebSocketContext();
+  const {
+    playerId,
+    playersArr,
+    handlePlayerView,
+    handlePlayers
+  } = useGameContext();
   const router = useRouter();
-  const [players, setPlayers] = useState<Player[]>([]);
+  const [players, setPlayers] = useState<PlayerLobby[]>([]);
   const [playerid,setPlayerid] = useState<string|null>(null);
 
   useEffect(()=>{
-    const playerListString = localStorage.getItem('players');
-    if(!playerListString){
-      console.log("local storage empty");
-      return;
-    }
-    const playeruuid = localStorage.getItem('playerId')
-    if(!playeruuid){
-      console.log("local storage empty");
-      return;
-    }
-    setPlayerid(playeruuid);
-    const playerList = JSON.parse(playerListString);
-    //@ts-ignore
-    const updatedPlayers = playerList?.map((player) => ({
-      playerName: player.name,
-      playerId: player.id,
-      title: player.title
-    }));
-    setPlayers(updatedPlayers);
+    // const playerListString = localStorage.getItem('players');
+    // if(!playerListString){
+    //   console.log("local storage empty");
+    //   return;
+    // }
+    // const playeruuid = localStorage.getItem('playerId')
+    // if(!playeruuid){
+    //   console.log("local storage empty");
+    //   return;
+    // }
+    // setPlayerid(playeruuid);
+    // const playerList = JSON.parse(playerListString);
+    // //@ts-ignore
+    // const updatedPlayers = playerList?.map((player) => ({
+    //   playerName: player.name,
+    //   playerId: player.id,
+    //   title: player.title
+    // }));
+    // setPlayers(updatedPlayers);
+    setPlayerid(playerId);
+    setPlayers(playersArr)
   },[])
 
   useEffect(() => {
@@ -70,12 +71,16 @@ const LobbyComponent = () => {
           }))
 
           setPlayers(updatePlayers);
+          handlePlayers(updatePlayers)
         }else if (message.type === "game_start") {
-          setTimeout(() => {}, 1000);
-          saveToDB(message.data).then(()=>{
-            updateLastProcessedEventIndex(messages.length - 1);
-            router.push("/game");
-          });
+          // setTimeout(() => {}, 1000);
+          // saveToDB(message.data).then(()=>{
+          //   updateLastProcessedEventIndex(messages.length - 1);
+          //   router.push("/game");
+          // });
+          handlePlayerView(message.data)
+          updateLastProcessedEventIndex(messages.length - 1);
+          router.push("/game");
           console.log("break loggesd");
           break;
         }

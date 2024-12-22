@@ -1,8 +1,8 @@
-import GameComponent from "@/components/game/game-component";
+import GameTable from "@/components/game/gameTable";
 import React from "react";
 
 const Game = () => {
-  return <GameComponent />;
+  return <GameTable />;
 };
 
 export default Game;

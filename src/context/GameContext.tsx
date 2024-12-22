@@ -1,16 +1,16 @@
 "use client"
 import React ,{ createContext,useContext,ReactNode,useState,useMemo }from 'react';
-import { Player, PlayerView } from '@/lib/types';
+import { PlayerLobby, PlayerView } from '@/lib/types';
 
 interface GameContextType{
     handlePlayerId:(player:string)=>void;
     handleRoomId:(room:string)=>void;
-    handlePlayers:(playerArr:Player[])=>void;
+    handlePlayers:(playerArr:PlayerLobby[])=>void;
     handlePlayerView:(playerViewArg:PlayerView)=>void;
     playerId:string;
     roomId:string;
-    players:Player[];
-    playerView:PlayerView|null
+    playersArr:PlayerLobby[];
+    currentPlayerView:PlayerView|null
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -18,7 +18,7 @@ const GameContext = createContext<GameContextType | undefined>(undefined);
 export const GameContextProvider:React.FC<{children:ReactNode}>=({children})=>{
     const [roomId,setRoomId]=useState<string>("");
     const [playerId,setPlayerId]=useState<string>("");
-    const [players,setPlayers]=useState<Player[]>([]);
+    const [players,setPlayers]=useState<PlayerLobby[]>([]);
     const [playerView,setPlayerView]=useState<PlayerView|null>(null);
 
     const handlePlayerId = (player:string) => {
@@ -26,7 +26,7 @@ export const GameContextProvider:React.FC<{children:ReactNode}>=({children})=>{
     }
    const handleRoomId = (room:string) => {    setRoomId(room);
 }
-  const handlePlayers = (playerArr:Player[]) => {
+  const handlePlayers = (playerArr:PlayerLobby[]) => {
         setPlayers(playerArr);
     }
     const handlePlayerView = (playerViewArg:PlayerView) => {
@@ -36,8 +36,8 @@ export const GameContextProvider:React.FC<{children:ReactNode}>=({children})=>{
     const contextValue = useMemo(()=>({
         roomId,
         playerId,
-        players,
-        playerView,
+        playersArr: players,
+        currentPlayerView: playerView,
         handlePlayerId,
         handleRoomId,
         handlePlayers,
@@ -47,7 +47,7 @@ export const GameContextProvider:React.FC<{children:ReactNode}>=({children})=>{
 )
 
     return (
-        <GameContext.Provider value = {contextValue}>
+        <GameContext.Provider value = { contextValue}>
             {children}
         </GameContext.Provider>
     )

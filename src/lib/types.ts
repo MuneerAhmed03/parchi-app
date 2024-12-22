@@ -20,3 +20,9 @@ export interface Player {
     name: string,
     isConnected: boolean
 }
+
+export interface PlayerLobby{
+    playerName: string;
+    playerId: string;
+    title: string | null;
+}
