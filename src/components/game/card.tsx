@@ -16,8 +16,9 @@ export function Card({ value, selected = false, onClick,isTurn }: CardProps) {
         console.log("getting clicked without turn")
         return}}
       className={`
-        w-16 md:w-24
-        h-24 md:h-36
+        w-[73.6px] md:w-[120px]
+        h-[110.4px] md:h-[180px]
+        px-2
         bg-white/90 
         backdrop-blur-sm
         rounded-lg 
@@ -36,7 +37,9 @@ export function Card({ value, selected = false, onClick,isTurn }: CardProps) {
         ${selected ? 'ring-2 ring-blue-500 -translate-y-2 md:-translate-y-4 bg-white' : ''}
       `}
     >
-      <span className="text-base md:text-lg font-semibold">
+      <span className="text-base md:text-lg font-semibold break-words 
+      overflow-hidden 
+      text-center">
         {value}
       </span>
     </div>

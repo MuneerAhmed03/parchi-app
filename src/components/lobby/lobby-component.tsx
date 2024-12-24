@@ -31,25 +31,6 @@ const LobbyComponent = () => {
   const [playerid,setPlayerid] = useState<string|null>(null);
 
   useEffect(()=>{
-    // const playerListString = localStorage.getItem('players');
-    // if(!playerListString){
-    //   console.log("local storage empty");
-    //   return;
-    // }
-    // const playeruuid = localStorage.getItem('playerId')
-    // if(!playeruuid){
-    //   console.log("local storage empty");
-    //   return;
-    // }
-    // setPlayerid(playeruuid);
-    // const playerList = JSON.parse(playerListString);
-    // //@ts-ignore
-    // const updatedPlayers = playerList?.map((player) => ({
-    //   playerName: player.name,
-    //   playerId: player.id,
-    //   title: player.title
-    // }));
-    // setPlayers(updatedPlayers);
     setPlayerid(playerId);
     setPlayers(playersArr)
   },[])
