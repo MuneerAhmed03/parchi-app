@@ -1,17 +1,18 @@
-import React from 'react';
+import React from "react";
 
-const PaperChit = ({ className = '', rotate = false }) => (
+const PaperChit = ({ className = "", rotate = false }) => (
   <svg
     className={className}
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 150 200"
     preserveAspectRatio="xMidYMid meet"
-    style={{ transform: rotate ? 'rotate(180deg)' : 'none', transition: 'transform 0.3s ease' }}
+    style={{
+      transform: rotate ? "rotate(180deg)" : "none",
+      transition: "transform 0.3s ease",
+    }}
   >
-    {/* Background */}
     <rect width="100%" height="100%" fill="none" />
 
-    {/* Paper Chit with Sharp Top and Bottom Edges and Curved Sides */}
     <path
       d="M20 15
          L30 15
@@ -35,27 +36,30 @@ const PaperChit = ({ className = '', rotate = false }) => (
       strokeWidth="1"
     />
 
-    {/* Horizontal Fold Crease with Lighter Gradient Fade */}
     <defs>
       <linearGradient id="horizontalFold" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0%" style={{ stopColor: '#d0d0d0', stopOpacity: 0.1 }} />
-        <stop offset="50%" style={{ stopColor: '#b0b0b0', stopOpacity: 0.3 }} />
-        <stop offset="100%" style={{ stopColor: '#d0d0d0', stopOpacity: 0.1 }} />
+        <stop offset="0%" style={{ stopColor: "#d0d0d0", stopOpacity: 0.1 }} />
+        <stop offset="50%" style={{ stopColor: "#b0b0b0", stopOpacity: 0.3 }} />
+        <stop
+          offset="100%"
+          style={{ stopColor: "#d0d0d0", stopOpacity: 0.1 }}
+        />
       </linearGradient>
     </defs>
     <rect x="38" y="99" width="75" height="1" fill="url(#horizontalFold)" />
 
-    {/* Vertical Fold Crease with Lighter Gradient Fade */}
     <defs>
       <linearGradient id="verticalFold" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" style={{ stopColor: '#d0d0d0', stopOpacity: 0.1 }} />
-        <stop offset="50%" style={{ stopColor: '#b0b0b0', stopOpacity: 0.3 }} />
-        <stop offset="100%" style={{ stopColor: '#d0d0d0', stopOpacity: 0.1 }} />
+        <stop offset="0%" style={{ stopColor: "#d0d0d0", stopOpacity: 0.1 }} />
+        <stop offset="50%" style={{ stopColor: "#b0b0b0", stopOpacity: 0.3 }} />
+        <stop
+          offset="100%"
+          style={{ stopColor: "#d0d0d0", stopOpacity: 0.1 }}
+        />
       </linearGradient>
     </defs>
     <rect x="74" y="30" width="1" height="145" fill="url(#verticalFold)" />
 
-    {/* Shadow for Depth */}
     <path
       d="M22 17
          L32 17

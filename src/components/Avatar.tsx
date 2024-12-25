@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface CrayonAvatarProps {
   name: string;
@@ -6,12 +6,16 @@ interface CrayonAvatarProps {
   className?: string;
 }
 
-export function CrayonAvatar({ name, isActive = false, className = '' }: CrayonAvatarProps) {
-  // Generate a consistent color based on name
-  const hue = name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % 360;
-  
+export function CrayonAvatar({
+  name,
+  isActive = false,
+  className = "",
+}: CrayonAvatarProps) {
+  const hue =
+    name.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0) % 360;
+
   return (
-    <div 
+    <div
       className={`relative ${className}`}
       role="img"
       aria-label={`${name}'s avatar`}
@@ -23,10 +27,9 @@ export function CrayonAvatar({ name, isActive = false, className = '' }: CrayonA
           h-full 
           transition-transform 
           duration-300
-          ${isActive ? 'scale-110' : 'scale-100'}
+          ${isActive ? "scale-110" : "scale-100"}
         `}
       >
-        {/* Background circle with wobble effect */}
         <path
           d={`
             M 50,50 
@@ -40,19 +43,20 @@ export function CrayonAvatar({ name, isActive = false, className = '' }: CrayonA
           strokeLinecap="round"
           className="origin-center animate-[spin_10s_linear_infinite]"
         />
-
-        {/* Crayon-style face elements */}
-        <g stroke={`hsl(${hue}, 40%, 40%)`} strokeWidth="2.5" strokeLinecap="round" fill="none">
-          {/* Wobbly smile */}
+        <g
+          stroke={`hsl(${hue}, 40%, 40%)`}
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          fill="none"
+        >
           <path
             d={`
               M 35,60 
-              Q 50,${isActive ? '75' : '70'} 65,60
+              Q 50,${isActive ? "75" : "70"} 65,60
             `}
             className="transition-all duration-300"
           />
-          
-          {/* Left eye */}
+
           <path
             d={`
               M 35,40 
@@ -61,8 +65,7 @@ export function CrayonAvatar({ name, isActive = false, className = '' }: CrayonA
               q -2,3 0,6
             `}
           />
-          
-          {/* Right eye */}
+
           <path
             d={`
               M 59,40 
@@ -73,7 +76,6 @@ export function CrayonAvatar({ name, isActive = false, className = '' }: CrayonA
           />
         </g>
 
-        {/* Scribble overlay for texture */}
         <g stroke={`hsl(${hue}, 60%, 75%)`} strokeWidth="1" opacity="0.3">
           {Array.from({ length: 8 }).map((_, i) => (
             <path
@@ -88,9 +90,8 @@ export function CrayonAvatar({ name, isActive = false, className = '' }: CrayonA
         </g>
       </svg>
 
-      {/* Active state glow effect */}
       {isActive && (
-        <div 
+        <div
           className="
             absolute 
             inset-0 

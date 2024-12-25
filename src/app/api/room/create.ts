@@ -19,7 +19,7 @@ export const createRoom = async (): Promise<string> => {
       const errorMessage = await response.text();
       throw new Error(`Failed to create room: ${errorMessage}`);
     }
-    return await response.text(); // Room ID as a plain string
+    return await response.text();
   } catch (error) {
     console.error("Error creating room:", error);
     throw error;

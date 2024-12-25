@@ -1,20 +1,23 @@
-import React from 'react';
+import React from "react";
 
 interface CardProps {
   value: string;
   selected?: boolean;
-  isTurn:boolean
+  isTurn: boolean;
   onClick?: () => void;
 }
 
-export function Card({ value, selected = false, onClick,isTurn }: CardProps) {
-
-  
+export function Card({ value, selected = false, onClick, isTurn }: CardProps) {
   return (
     <div
-      onClick={isTurn? onClick : ()=> {
-        console.log("getting clicked without turn")
-        return}}
+      onClick={
+        isTurn
+          ? onClick
+          : () => {
+              console.log("getting clicked without turn");
+              return;
+            }
+      }
       className={`
         w-[73.6px] md:w-[120px]
         h-[110.4px] md:h-[180px]
@@ -34,12 +37,14 @@ export function Card({ value, selected = false, onClick,isTurn }: CardProps) {
         hover:shadow-xl
         active:scale-95
         font-pencil
-        ${selected ? 'ring-2 ring-blue-500 -translate-y-2 md:-translate-y-4 bg-white' : ''}
+        ${selected ? "ring-2 ring-blue-500 -translate-y-2 md:-translate-y-4 bg-white" : ""}
       `}
     >
-      <span className="text-base md:text-lg font-semibold break-words 
+      <span
+        className="text-base md:text-lg font-semibold break-words 
       overflow-hidden 
-      text-center">
+      text-center"
+      >
         {value}
       </span>
     </div>

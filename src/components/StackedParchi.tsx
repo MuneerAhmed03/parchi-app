@@ -1,5 +1,5 @@
-import React from 'react';
-import PaperChit from '@/components/Parchi';
+import React from "react";
+import PaperChit from "@/components/Parchi";
 
 const StackedPaperChits = ({ count = 5 }) => {
   return (
@@ -9,7 +9,8 @@ const StackedPaperChits = ({ count = 5 }) => {
           key={index}
           className="absolute inset-0"
           style={{
-            transform: index === count - 1 ? 'none' : `rotate(${-4 + 3 * index}deg)`,
+            transform:
+              index === count - 1 ? "none" : `rotate(${-4 + 3 * index}deg)`,
             zIndex: index,
           }}
         >

@@ -1,8 +1,8 @@
-"use client"
-import React from 'react';
-import ReactConfetti from 'react-confetti';
+"use client";
+import React from "react";
+import ReactConfetti from "react-confetti";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 
 interface WinnerModalProps {
   isOpen: boolean;
@@ -10,12 +10,17 @@ interface WinnerModalProps {
   onClose: () => void;
 }
 
-const WinnerModal: React.FC<WinnerModalProps> = ({ isOpen, winnerName, onClose }) => {
+const WinnerModal: React.FC<WinnerModalProps> = ({
+  isOpen,
+  winnerName,
+  onClose,
+}) => {
   const router = useRouter();
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="
+      <DialogContent
+        className="
         fixed 
         top-[50%] 
         left-[50%] 
@@ -30,22 +35,23 @@ const WinnerModal: React.FC<WinnerModalProps> = ({ isOpen, winnerName, onClose }
         w-[90vw]
         max-w-md
         z-50
-      ">
+      "
+      >
         {isOpen && <ReactConfetti recycle={true} numberOfPieces={200} />}
-        
+
         <div className="flex flex-col items-center gap-6 py-8">
           <h2 className="text-4xl font-bold text-center text-primary animate-pulse">
             🎉 Winner! 🎉
           </h2>
-          
+
           <div className="bg-[#ffa726] p-6 rounded-xl border-2 border-black transform rotate-2 shadow-lg">
             <p className="text-2xl font-bold text-center break-words">
               {winnerName}
             </p>
           </div>
-          
+
           <button
-            onClick={() => router.push('/')}
+            onClick={() => router.push("/")}
             className="mt-4 bg-green-500 hover:bg-green-600 text-white px-8 py-3 rounded-full 
               font-bold text-lg transform hover:scale-105 transition-all duration-300 
               border-2 border-black shadow-lg"
@@ -58,4 +64,4 @@ const WinnerModal: React.FC<WinnerModalProps> = ({ isOpen, winnerName, onClose }
   );
 };
 
-export default WinnerModal; 
+export default WinnerModal;

@@ -42,7 +42,7 @@ export default function RootLayout({
           ${pencilFont.variable} ${geistSans.variable} ${geistMono.variable} antialiased min-h-screen`}
       >
         <GameContextProvider>
-        <WebSocketProvider>{children}</WebSocketProvider>
+          <WebSocketProvider>{children}</WebSocketProvider>
         </GameContextProvider>
       </body>
     </html>

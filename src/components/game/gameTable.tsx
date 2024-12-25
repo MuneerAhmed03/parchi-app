@@ -1,31 +1,29 @@
-"use client"
-import React, { useState, useEffect } from 'react';
-import { PlayerCard } from '@/components/game/PlayerCard';
-import { Card } from '@/components/game/card';
+"use client";
+import React, { useState, useEffect } from "react";
+import { PlayerCard } from "@/components/game/PlayerCard";
+import { Card } from "@/components/game/card";
 import { Player, PlayerView } from "@/lib/types";
 import { useWebSocketContext } from "@/context/RoomContext";
 import { useGameContext } from "@/context/GameContext";
 import WinnerModal from "./winner-modal";
 
-const positions = ['left', 'top', 'right']
+const positions = ["left", "top", "right"];
 
 const checkWinning = (cards: { title: string; id: string }[]) => {
-  return cards.length === 4 && cards.every(card => card.title === cards[0].title)
-}
+  return (
+    cards.length === 4 && cards.every((card) => card.title === cards[0].title)
+  );
+};
 
 export default function GameTable() {
-  const {
-    roomId,
-    playerId,
-    currentPlayerView,
-    handlePlayerView
-  } = useGameContext();
+  const { roomId, playerId, currentPlayerView, handlePlayerView } =
+    useGameContext();
   const {
     isConnected,
     messages,
     sendMessage,
     lastProcessedEventIndex,
-    updateLastProcessedEventIndex
+    updateLastProcessedEventIndex,
   } = useWebSocketContext();
 
   const [selectedCard, setSelectedCard] = useState<number | null>(null);
@@ -38,34 +36,31 @@ export default function GameTable() {
 
   useEffect(() => {
     const mountGame = async () => {
-
-
       const playerView = currentPlayerView;
       if (!playerView) {
         console.warn("[GameTable] No playerView available during mount");
         return;
       }
 
-
-      const boardSetup = [...playerView.players.slice(playerView.playerIndex), ...playerView.players.slice(0, playerView.playerIndex)];
+      const boardSetup = [
+        ...playerView.players.slice(playerView.playerIndex),
+        ...playerView.players.slice(0, playerView.playerIndex),
+      ];
 
       setBoard(boardSetup);
       setCards(playerView.hand);
       setGameState(playerView);
-      setIsWinning(checkWinning(playerView.hand))
-    }
+      setIsWinning(checkWinning(playerView.hand));
+    };
     mountGame();
   }, [currentPlayerView]);
 
   useEffect(() => {
     if (messages.length > lastProcessedEventIndex + 1) {
-
       for (let i = lastProcessedEventIndex + 1; i < messages.length; i++) {
         const message = messages[i];
         if (message.type === "gameState") {
-          //@ts-ignore
           const updateGameState = message.data;
-          // setGameState(updateGameState);
           handlePlayerView(updateGameState);
         } else if (message.type === "game_end") {
           const winnerName = message.winner;
@@ -74,29 +69,25 @@ export default function GameTable() {
         }
       }
 
-
       updateLastProcessedEventIndex(messages.length - 1);
     }
   }, [messages, lastProcessedEventIndex, updateLastProcessedEventIndex]);
 
-
   const handlePass = (cardIndex: number) => {
-
     sendMessage({
       type: "play_card",
       roomId,
       playerId,
-      cardIndex
-    }
-    )
-  }
+      cardIndex,
+    });
+  };
   const handleClaimWin = () => {
     sendMessage({
       type: "claim_win",
       roomId,
-      playerId
-    })
-  }
+      playerId,
+    });
+  };
 
   return (
     <div
@@ -107,43 +98,50 @@ export default function GameTable() {
         transition-colors duration-500
       "
     >
-      {/* Table felt overlay */}
-      <div className="
+      <div
+        className="
         absolute inset-0 
         bg-[url('/felt-pattern.png')]
         md:opacity-10
         
-      " />
+      "
+      />
 
-      {/* Game area with subtle inner shadow */}
-      <div className="
+      <div
+        className="
         absolute inset-2 md:inset-8
         rounded-[100px]
         shadow-inner
         bg-black/5
-      " />
+      "
+      />
 
       {board.slice(1).map((player, index) => {
-        const isCurrentPlayer = gameState ?
-          (gameState.currentPlayerIndex - gameState.playerIndex + 4) % 4 === index + 1
+        const isCurrentPlayer = gameState
+          ? (gameState.currentPlayerIndex - gameState.playerIndex + 4) % 4 ===
+            index + 1
           : false;
-
 
         return (
           <PlayerCard
             key={player.id}
             name={player.name}
             isCurrentPlayer={isCurrentPlayer}
-            position={positions[index] as 'top' | 'bottom' | 'left' | 'right'}
-          />)
+            position={positions[index] as "top" | "bottom" | "left" | "right"}
+          />
+        );
       })}
 
-      <div className="
+      <div
+        className="
           flex flex-col
           items-center
-        ">
+        "
+      >
         <button
-          onClick={() => selectedCard !== null ? handlePass(selectedCard) : undefined}
+          onClick={() =>
+            selectedCard !== null ? handlePass(selectedCard) : undefined
+          }
           className="
         absolute
         top-[calc(100%-18rem)] 
@@ -199,8 +197,7 @@ export default function GameTable() {
               focus:ring-2
               focus:ring-yellow-400
               focus:ring-offset-2
-              ${isWinning ? '' : 'hidden'}`}
-
+              ${isWinning ? "" : "hidden"}`}
           aria-label="Claim win"
         >
           🎨 Claim Win!
@@ -221,7 +218,8 @@ export default function GameTable() {
         bg-white/5
         backdrop-blur-sm
         mb-8
-      ">
+      "
+      >
         {cards.map((card, index) => (
           <Card
             key={index}
@@ -234,10 +232,10 @@ export default function GameTable() {
           />
         ))}
       </div>
-      <WinnerModal 
-        isOpen={showWinnerModal} 
-        winnerName={winner} 
-        onClose={() => setShowWinnerModal(false)} 
+      <WinnerModal
+        isOpen={showWinnerModal}
+        winnerName={winner}
+        onClose={() => setShowWinnerModal(false)}
       />
     </div>
   );

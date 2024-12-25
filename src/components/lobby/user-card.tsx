@@ -1,7 +1,12 @@
 "use client";
 import Image from "next/image";
 import React, { FC, useState } from "react";
-import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useGameContext } from "@/context/GameContext";
 
@@ -14,12 +19,16 @@ export interface UserCardProps {
   isCurrentPlayer: boolean;
 }
 
-const UserCard: FC<UserCardProps> = ({ playerName, playerAvtar, playerStatus, tilt, handleSubmit, isCurrentPlayer }) => {
+const UserCard: FC<UserCardProps> = ({
+  playerName,
+  playerAvtar,
+  playerStatus,
+  tilt,
+  handleSubmit,
+  isCurrentPlayer,
+}) => {
   const [title, setTitle] = useState<string | null>(playerStatus);
-  const {
-    playerId,
-    roomId
-  } = useGameContext();
+  const { playerId, roomId } = useGameContext();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(event.target.value);
@@ -29,17 +38,19 @@ const UserCard: FC<UserCardProps> = ({ playerName, playerAvtar, playerStatus, ti
     if (handleSubmit) {
       handleSubmit({
         type: "submit_title",
-        data: { 
+        data: {
           title,
           roomId,
-          playerId},
+          playerId,
+        },
       });
     }
   };
 
   const cardStyle = {
     transform: `rotate(${tilt}deg)`,
-    transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out, scale 0.3s ease-in-out",
+    transition:
+      "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out, scale 0.3s ease-in-out",
   };
 
   const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -75,7 +86,9 @@ const UserCard: FC<UserCardProps> = ({ playerName, playerAvtar, playerStatus, ti
                   Submit Title..
                 </DialogTrigger>
                 <DialogContent className="bg-white font-pencil text-primary">
-                  <DialogTitle className="text-center font-bold">Submit Card Title</DialogTitle>
+                  <DialogTitle className="text-center font-bold">
+                    Submit Card Title
+                  </DialogTitle>
                   <div className="grid gap-4 place-items-center py-4">
                     <Input
                       id="roomId"

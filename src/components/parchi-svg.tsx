@@ -4,10 +4,13 @@ interface ParchiSvgProps {
 }
 const ParchiSvg: React.FC<ParchiSvgProps> = ({ className }) => {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="20 15 110 170" preserveAspectRatio="xMidYMid meet" className={`${className}`}>
-      {/* Background */}
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="20 15 110 170"
+      preserveAspectRatio="xMidYMid meet"
+      className={`${className}`}
+    >
       <rect width="100%" height="100%" fill="none" />
-      {/* Paper Chit with Sharp Top and Bottom Edges and Curved Sides */}
       <path
         d="M20 15
            L30 15
@@ -28,18 +31,17 @@ const ParchiSvg: React.FC<ParchiSvgProps> = ({ className }) => {
            Z"
         fill="#ffffff"
         stroke="#d3d3d3"
-        strokeWidth="1" // Use camelCase
+        strokeWidth="1"
       />
-      {/* Horizontal Fold Crease */}
       <defs>
         <linearGradient id="horizontalFold" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#d0d0d0" stopOpacity="0.1" /> {/* Use camelCase */}
+          <stop offset="0%" stopColor="#d0d0d0" stopOpacity="0.1" />
           <stop offset="50%" stopColor="#b0b0b0" stopOpacity="0.3" />
           <stop offset="100%" stopColor="#d0d0d0" stopOpacity="0.1" />
         </linearGradient>
       </defs>
       <rect x="38" y="99" width="75" height="1" fill="url(#horizontalFold)" />
-      {/* Vertical Fold Crease */}
+
       <defs>
         <linearGradient id="verticalFold" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#d0d0d0" stopOpacity="0.1" />
@@ -48,7 +50,6 @@ const ParchiSvg: React.FC<ParchiSvgProps> = ({ className }) => {
         </linearGradient>
       </defs>
       <rect x="74" y="30" width="1" height="145" fill="url(#verticalFold)" />
-      {/* Shadow for Depth */}
       <path
         d="M22 17
            L32 17
@@ -69,7 +70,7 @@ const ParchiSvg: React.FC<ParchiSvgProps> = ({ className }) => {
            Z"
         fill="none"
         stroke="rgba(0, 0, 0, 0.1)"
-        strokeWidth="3" // Use camelCase
+        strokeWidth="3"
       />
     </svg>
   );

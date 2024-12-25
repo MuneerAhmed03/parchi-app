@@ -1,28 +1,28 @@
 export default interface GameState {
-    players: Player[];
-    hands: { title: string; id: string }[][];
-    currentPlayerIndex: number;
-    gameStatus: string;
-    winner?: string;
+  players: Player[];
+  hands: { title: string; id: string }[][];
+  currentPlayerIndex: number;
+  gameStatus: string;
+  winner?: string;
 }
 
 export interface PlayerView {
-    playerIndex: number
-    players: Player[];
-    hand: { title: string; id: string }[];
-    currentPlayerIndex: number;
-    gameStatus: string;
-    winner?: string;
+  playerIndex: number;
+  players: Player[];
+  hand: { title: string; id: string }[];
+  currentPlayerIndex: number;
+  gameStatus: string;
+  winner?: string;
 }
 
 export interface Player {
-    id: string,
-    name: string,
-    isConnected: boolean
+  id: string;
+  name: string;
+  isConnected: boolean;
 }
 
-export interface PlayerLobby{
-    playerName: string;
-    playerId: string;
-    title: string | null;
+export interface PlayerLobby {
+  playerName: string;
+  playerId: string;
+  title: string | null;
 }

@@ -27,23 +27,20 @@ export const Hand: FC<HandProps> = ({ hand, isTurn, handlePass }) => {
 
   return (
     <div className="relative w-full px-4 py-6">
-      {/* Cards Container */}
       <div className="flex justify-center items-center gap-2 md:gap-4 flex-wrap">
         {hand.map((card) => (
           <div
             key={card.id}
             className={`relative cursor-pointer transition-all duration-300 hover:scale-105 
-              ${selectedCard === card.id ? 'ring-2 ring-black ring-offset-2' : ''}`}
+              ${selectedCard === card.id ? "ring-2 ring-black ring-offset-2" : ""}`}
             onClick={() => handleCardClick(card.id)}
           >
-            {/* Card Title */}
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
               <span className="text-sm md:text-base font-bold text-gray-800 whitespace-nowrap">
                 {card.title}
               </span>
             </div>
-            
-            {/* Parchi SVG */}
+
             <div className="w-24 md:w-32 h-32 md:h-40">
               <ParchiSvg className="w-full h-full" />
             </div>
@@ -51,7 +48,6 @@ export const Hand: FC<HandProps> = ({ hand, isTurn, handlePass }) => {
         ))}
       </div>
 
-      {/* Pass Button */}
       {selectedCard && isTurn && (
         <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 mb-2">
           <button

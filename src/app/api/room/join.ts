@@ -2,7 +2,10 @@ import { v4 as uuidv4 } from "uuid";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
-export const joinRoom = async (roomId: string, playerId: string): Promise<{ success: boolean }> => {
+export const joinRoom = async (
+  roomId: string,
+  playerId: string,
+): Promise<{ success: boolean }> => {
   const apiUrl = `${BASE_URL}/join-room`;
 
   try {
