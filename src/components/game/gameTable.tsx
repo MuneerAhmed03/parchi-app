@@ -6,6 +6,7 @@ import { Player, PlayerView } from "@/lib/types";
 import { useWebSocketContext } from "@/context/RoomContext";
 import { useGameContext } from "@/context/GameContext";
 import WinnerModal from "./winner-modal";
+import { Toaster, toast } from 'react-hot-toast';
 
 const positions = ["left", "top", "right"];
 
@@ -66,9 +67,16 @@ export default function GameTable() {
           const winnerName = message.winner;
           setWinner(winnerName);
           setShowWinnerModal(true);
+        } else if(message.type ==="player_disconnect"){
+          const name = gameState?.players.find(p=> p.id === message.data)?.name;
+          toast.error(`${name} Disconnected`, {
+            duration: 3000,
+            position: 'top-center',
+          });
+        } else if(message.type === "game_start"){
+          handlePlayerView(message.data);
         }
       }
-
       updateLastProcessedEventIndex(messages.length - 1);
     }
   }, [messages, lastProcessedEventIndex, updateLastProcessedEventIndex]);
@@ -89,7 +97,16 @@ export default function GameTable() {
     });
   };
 
+  const handleRestart = () => {
+    sendMessage({
+      type: "restart",
+      roomId
+    })
+  }
+
   return (
+    <div>
+      <Toaster/>
     <div
       className="
         relative w-full h-screen 
@@ -236,7 +253,9 @@ export default function GameTable() {
         isOpen={showWinnerModal}
         winnerName={winner}
         onClose={() => setShowWinnerModal(false)}
+        handleRestart={handleRestart}
       />
+    </div>
     </div>
   );
 }

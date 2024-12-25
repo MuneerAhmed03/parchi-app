@@ -25,7 +25,7 @@ const LobbyComponent = () => {
     lastProcessedEventIndex,
     updateLastProcessedEventIndex,
   } = useWebSocketContext();
-  const { playerId, playersArr, handlePlayerView, handlePlayers } =
+  const { playerId, playersArr, handlePlayerView, handlePlayers,roomId } =
     useGameContext();
   const router = useRouter();
   const [players, setPlayers] = useState<PlayerLobby[]>([]);
@@ -57,9 +57,12 @@ const LobbyComponent = () => {
         } else if (message.type === "game_start") {
           handlePlayerView(message.data);
           updateLastProcessedEventIndex(messages.length - 1);
-          router.push("/game");
+          router.push("/game"); 
           console.log("break loggesd");
           break;
+        } else if(message.type ==="player_disconnect"){
+          const name = players.find(p=> p.playerId === message.data)?.playerName;
+          alert(`${name} got disconnected`);
         }
       }
       updateLastProcessedEventIndex(messages.length - 1);
@@ -80,9 +83,18 @@ const LobbyComponent = () => {
     (player) => player?.playerId === playerid,
   );
 
+  const handleLeaveRoom = ()=>{
+    sendMessage({
+      type:"room_exit",
+      roomId,
+      playerId
+    })
+    router.push("/")
+  }
+
   return (
     <div className="bg-[#ffa726] px-3 py-5 flex flex-col justify-around gap-5 overflow-hidden w-screen h-screen">
-      <Header />
+      <Header handleLeaveRoom={handleLeaveRoom} />
       <div className="grid gap-3 grid-cols-1 p-2 md:grid-cols-2 lg:gap-5 justify-center place-items-center w-full md:w-fit mx-auto max-md:overflow-y-auto">
         {playerSlots.map((player, index) =>
           player ? (

@@ -22,6 +22,7 @@ import { useGameContext } from "@/context/GameContext";
 import { createRoom, joinRoom } from "@/lib/rooms";
 import { useRouter } from "next/navigation";
 import { PlayerLobby } from "@/lib/types";
+import { Toaster, toast } from 'react-hot-toast';
 
 export default function Home() {
   const router = useRouter();
@@ -43,7 +44,7 @@ export default function Home() {
     updateLastProcessedEventIndex,
   } = useWebSocketContext();
 
-  const { handlePlayerId, handleRoomId, handlePlayers } = useGameContext();
+  const { handlePlayerId, handleRoomId, handlePlayers,handlePlayerView } = useGameContext();
 
   const handleInputChange =
     (formType: "create" | "join", field: string) =>
@@ -112,8 +113,24 @@ export default function Home() {
           console.log("ws not connected");
           return true;
         });
-    } catch (error) {
-      console.error("Error joining room :", error);
+    } catch (error: any) {
+      if (error.message === "Room not found") {
+        toast.error("Room not found. Please check the room ID and try again.", {
+          duration: 3000,
+          position: 'top-center',
+        });
+      } else if (error.message === "Room is full") {
+        toast.error("This room is full. Please try joining another room.", {
+          duration: 3000,
+          position: 'top-center',
+        });
+      } else {
+        toast.error("Failed to join room. Please try again.", {
+          duration: 3000,
+          position: 'top-center',
+        });
+      }
+      console.error("Error joining room:", error);
     }
   };
 
@@ -134,7 +151,12 @@ export default function Home() {
           updateLastProcessedEventIndex(i);
           console.log(lastProcessedEventIndex);
           break;
-        } else {
+        } else if(message.type === "gameState"){
+          handlePlayerView(message.data);
+          updateLastProcessedEventIndex(messages.length - 1);
+          router.push("/game");
+        } 
+        else {
           console.log("messagefrom page.tsx", message);
         }
       }
@@ -144,6 +166,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <Toaster />
       <header className="w-full relative flex justify-center items-center py-4">
         <Popover>
           <PopoverTrigger

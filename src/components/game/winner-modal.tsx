@@ -8,22 +8,23 @@ interface WinnerModalProps {
   isOpen: boolean;
   winnerName: string;
   onClose: () => void;
+  handleRestart : ()=>void;
 }
 
 const WinnerModal: React.FC<WinnerModalProps> = ({
   isOpen,
   winnerName,
   onClose,
+  handleRestart
 }) => {
-  const router = useRouter();
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent
         className="
-        fixed 
-        top-[50%] 
-        left-[50%] 
+
+        top-1/2
+        left-1/2
         -translate-x-1/2 
         -translate-y-1/2 
         bg-white 
@@ -51,7 +52,7 @@ const WinnerModal: React.FC<WinnerModalProps> = ({
           </div>
 
           <button
-            onClick={() => router.push("/")}
+            onClick={handleRestart}
             className="mt-4 bg-green-500 hover:bg-green-600 text-white px-8 py-3 rounded-full 
               font-bold text-lg transform hover:scale-105 transition-all duration-300 
               border-2 border-black shadow-lg"

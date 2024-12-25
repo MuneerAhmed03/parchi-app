@@ -51,7 +51,11 @@ export const joinRoom = async (
       body: JSON.stringify({ roomId, playerId, playerName }),
     });
 
-    if (!response.ok) {
+    if (response.status === 404) {
+      throw new Error("Room not found");
+    } else if (response.status === 400) {
+      throw new Error("Room is full");
+    } else if (!response.ok) {
       const errorMessage = await response.text();
       throw new Error(`Failed to join room: ${errorMessage}`);
     }
