@@ -1,7 +1,8 @@
-import { CopyIcon } from "lucide-react";
+import { CopyIcon as Copy} from "lucide-react";
 import React from "react";
 import { useGameContext } from "@/context/GameContext";
 import { useWebSocketContext } from "@/context/RoomContext";
+import { Button } from "../ui/button";
 
 
 interface headerProps {
@@ -12,19 +13,34 @@ const Header : React.FC<headerProps> = ({handleLeaveRoom}) => {
   const { roomId,playerId } = useGameContext();
   const {sendMessage} =useWebSocketContext()
 
-
+  const copyRoomId = () =>{
+    navigator.clipboard.writeText(roomId)
+  }
 
   return (
-    <div className="bg-white max-w-[500px] w-full mx-auto flex flex-col gap-1 md:flex-row justify-between items-center px-2 py-1 md:px-5 md:py-3 border-2 border-black rounded-xl">
-      <div className="font-extrabold text-lg md:text-xl inline-flex gap-2 items-center">
-        {`Room ID: ${roomId}`}{" "}
-        <CopyIcon className="h-5 w-5 cursor-pointer text-gray-500" />
-      </div>
-
-      <button onClick={handleLeaveRoom} className="bg-red-500 text-white text-sm md:text-base font-bold px-4 py-1 rounded-3xl">
-        Leave Room
-      </button>
+    <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 md:mx-auto relative flex items-center justify-between md:w-1/2">
+    <div className="flex items-center gap-2">
+      <span className="text-white font-medium">Room ID:</span>
+      <code className="bg-white/20 px-3 py-1 rounded-md text-white font-mono">
+        {roomId}
+      </code>
     </div>
+    <div className="flex gap-2">
+      <Button
+        variant="secondary"
+        size="sm"
+        className="gap-2 bg-white"
+        onClick={copyRoomId}
+      >
+        <Copy className="h-4 w-4" />
+        Copy
+      </Button>
+      <Button variant="destructive" className="bg-[#d32f2f]" size="sm">
+        Leave Room
+      </Button>
+    </div>
+  </div>
+
   );
 };
 

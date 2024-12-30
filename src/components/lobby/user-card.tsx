@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useGameContext } from "@/context/GameContext";
+import { CrayonAvatar as Avatar } from "../Avatar";
 
 export interface UserCardProps {
   playerName: string | null;
@@ -65,12 +66,14 @@ const UserCard: FC<UserCardProps> = ({
 
   return (
     <div
-      className="bg-[#E6E6E6] flex flex-col p-3 items-center justify-around w-64 md:w-[340px] md:h-44 lg:w-[420px] lg:h-48 border-2 border-black"
+      className="bg-[#E6E6E6] flex flex-col p-3 items-center justify-around w-64 h-36 md:w-[340px] md:h-44 lg:w-[420px] lg:h-48 border-2 border-black"
       style={cardStyle}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <Image src={playerAvtar || ""} alt="user avatar" width={70} height={70} />
+      {playerName && 
+        <Avatar name={playerName}/>
+      }
       <p className="font-bold text-lg md:text-xl font-pencil">
         {playerName || "Waiting for the user"}
       </p>

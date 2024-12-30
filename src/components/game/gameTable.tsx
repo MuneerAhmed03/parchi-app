@@ -253,7 +253,7 @@ export default function GameTable() {
         isOpen={showWinnerModal}
         winnerName={winner}
         onClose={() => setShowWinnerModal(false)}
-        handleRestart={handleRestart}
+        onPlayAgain={handleRestart}
       />
     </div>
     </div>
