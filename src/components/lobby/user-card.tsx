@@ -72,7 +72,7 @@ const UserCard: FC<UserCardProps> = ({
       onMouseLeave={handleMouseLeave}
     >
       {playerName && 
-        <Avatar name={playerName}/>
+        <Avatar name={playerName} className="w-12 h-12"/>
       }
       <p className="font-bold text-lg md:text-xl font-pencil">
         {playerName || "Waiting for the user"}

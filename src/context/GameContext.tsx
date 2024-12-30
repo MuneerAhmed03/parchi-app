@@ -5,8 +5,10 @@ import React, {
   ReactNode,
   useState,
   useMemo,
+  useEffect
 } from "react";
 import { PlayerLobby, PlayerView } from "@/lib/types";
+import Cookies from 'js-cookie';
 
 interface GameContextType {
   handlePlayerId: (player: string) => void;
@@ -41,6 +43,13 @@ export const GameContextProvider: React.FC<{ children: ReactNode }> = ({
   const handlePlayerView = (playerViewArg: PlayerView) => {
     setPlayerView(playerViewArg);
   };
+
+  useEffect(() => {
+    if (roomId) {
+      Cookies.set('roomId', roomId); 
+    }
+  }, [roomId])
+
 
   const contextValue = useMemo(
     () => ({

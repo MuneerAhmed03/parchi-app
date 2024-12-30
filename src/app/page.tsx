@@ -269,6 +269,8 @@ export default function Home() {
                       className="col-span-3"
                       value={joinRoomForm.roomId}
                       onChange={handleInputChange("join", "roomId")}
+                      autoComplete="off"
+                      aria-autocomplete="none"
                     />
                   </div>
                   <button className="w-full" onClick={handleJoinRoom}>

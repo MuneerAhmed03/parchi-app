@@ -75,6 +75,8 @@ export default function GameTable() {
           });
         } else if(message.type === "game_start"){
           handlePlayerView(message.data);
+          setShowWinnerModal(false);
+          setWinner("")
         }
       }
       updateLastProcessedEventIndex(messages.length - 1);
@@ -88,6 +90,7 @@ export default function GameTable() {
       playerId,
       cardIndex,
     });
+    setSelectedCard(null);
   };
   const handleClaimWin = () => {
     sendMessage({
@@ -149,77 +152,77 @@ export default function GameTable() {
         );
       })}
 
-      <div
-        className="
-          flex flex-col
-          items-center
-        "
-      >
-        <button
-          onClick={() =>
-            selectedCard !== null ? handlePass(selectedCard) : undefined
-          }
-          className="
-        absolute
-        top-[calc(100%-18rem)] 
-        md:top-1/2
-          bg-white/90
-          backdrop-blur-sm
-          px-4 md:px-8 
-          py-2 md:py-3 
-          text-sm md:text-base
-          rounded-full 
-          font-semibold 
-          text-gray-800 
-          shadow-lg
-          transition-all
-          duration-300
-          hover:bg-white
-          hover:shadow-xl
-          hover:scale-105
-          active:scale-95
-          disabled:opacity-50
-          disabled:hover:scale-100
-          disabled:cursor-not-allowed
-          mt-6
-        "
-          disabled={selectedCard === null}
-        >
-          Pass Card
-        </button>
+<div
+  className="
+    flex flex-col
+    items-center
+    gap-6
+    mt-24 md:mt-0
+  "
+>
+  <button
+    onClick={() =>
+      selectedCard !== null ? handlePass(selectedCard) : undefined
+    }
+    className="
+      bg-white/90
+      backdrop-blur-sm
+      px-4 md:px-8 
+      py-2 md:py-3 
+      text-sm md:text-base
+      rounded-full 
+      font-semibold 
+      text-gray-800 
+      shadow-lg
+      transition-all
+      duration-300
+      hover:bg-white
+      hover:shadow-xl
+      hover:scale-105
+      active:scale-95
+      disabled:opacity-50
+      disabled:hover:scale-100
+      disabled:cursor-not-allowed
+      mt-6
+    "
+    disabled={selectedCard === null}
+  >
+    Pass Card
+  </button>
 
-        <button
-          onClick={handleClaimWin}
-          className={`
-            absolute
-              mb-6
-              bg-gradient-to-r
-              from-yellow-400
-              to-yellow-500
-              text-white
-              px-4 md:px-8 
-              py-2 md:py-3 
-              text-sm md:text-base
-              rounded-full 
-              font-bold
-              shadow-lg
-              transition-all
-              duration-300
-              hover:shadow-xl
-              hover:scale-105
-              hover:from-yellow-300
-              hover:to-orange-300
-              active:scale-95
-              focus:outline-none
-              focus:ring-2
-              focus:ring-yellow-400
-              focus:ring-offset-2
-              ${isWinning ? "" : "hidden"}`}
-          aria-label="Claim win"
-        >
-          🎨 Claim Win!
-        </button>
-      </div>
+  <button
+    onClick={handleClaimWin}
+    className={`
+      mb-6
+      bg-gradient-to-r
+      from-yellow-400
+      to-yellow-500
+      text-white
+      px-4 md:px-8 
+      py-2 md:py-3 
+      text-sm md:text-base
+      rounded-full 
+      font-bold
+      shadow-lg
+      transition-all
+      duration-300
+      hover:shadow-xl
+      hover:scale-105
+      hover:from-yellow-300
+      hover:to-orange-300
+      active:scale-95
+      focus:outline-none
+      focus:ring-2
+      focus:ring-yellow-400
+      focus:ring-offset-2
+      z-10
+      ${isWinning ? "" : "hidden"}`}
+    aria-label="Claim win"
+  >
+    🎨 Claim Win!
+  </button>
+</div>
+
       <div
         id="hand"
         className="
