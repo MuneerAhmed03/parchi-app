@@ -168,7 +168,7 @@ export default function Home() {
     <div className="min-h-screen flex flex-col">
       <Toaster />
       <header className="w-full relative flex justify-center items-center py-4">
-        <Popover>
+        {/* <Popover>
           <PopoverTrigger
             className="absolute top-4 right-4 p-2 rounded-md hover:bg-gray-100 focus:outline-none"
             aria-label="Toggle Menu"
@@ -185,7 +185,7 @@ export default function Home() {
               </div>
             </div>
           </PopoverContent>
-        </Popover>
+        </Popover> */}
 
         <div className="relative w-full max-w-[500px] mx-auto">
           <Image
@@ -269,6 +269,8 @@ export default function Home() {
                       className="col-span-3"
                       value={joinRoomForm.roomId}
                       onChange={handleInputChange("join", "roomId")}
+                      autoComplete="off"
+                      aria-autocomplete="none"
                     />
                   </div>
                   <button className="w-full" onClick={handleJoinRoom}>
