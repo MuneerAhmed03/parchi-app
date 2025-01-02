@@ -7,6 +7,7 @@ import { useWebSocketContext } from "@/context/RoomContext";
 import { useGameContext } from "@/context/GameContext";
 import WinnerModal from "./winner-modal";
 import { Toaster, toast } from 'react-hot-toast';
+import ExitButton from "./ExitButton";
 
 const positions = ["left", "top", "right"];
 
@@ -110,6 +111,7 @@ export default function GameTable() {
   return (
     <div>
       <Toaster/>
+      <ExitButton />
     <div
       className="
         relative w-full h-screen 
@@ -227,13 +229,13 @@ export default function GameTable() {
         id="hand"
         className="
         absolute 
-        bottom-6
+        bottom-20
         md:bottom-4 
         left-1/2 
         -translate-x-1/2 
         flex 
         gap-2 md:gap-4
-        p-4
+        md:p-4
         rounded-2xl
         bg-white/5
         backdrop-blur-sm

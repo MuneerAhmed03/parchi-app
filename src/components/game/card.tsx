@@ -19,8 +19,8 @@ export function Card({ value, selected = false, onClick, isTurn }: CardProps) {
             }
       }
       className={`
-        w-[58.88px] md:w-[120px]
-        h-[88.32px] md:h-[180px]
+        w-[73.60px] md:w-[120px]
+        h-[110.40px] md:h-[180px]
         px-2
         bg-white/90 
         backdrop-blur-sm
