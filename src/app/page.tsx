@@ -10,21 +10,23 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import { useWebSocketContext } from "@/context/RoomContext";
 import { useGameContext } from "@/context/GameContext";
 import { createRoom, joinRoom } from "@/lib/rooms";
-import { useRouter } from "next/navigation";
+import { useRouter , useSearchParams } from "next/navigation";
 import { PlayerLobby } from "@/lib/types";
 import { Toaster, toast } from 'react-hot-toast';
 import HelpModal from "@/components/HelpModal";
 
 export default function Home() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const roomIdParam = searchParams.get("join");
+  const [isJoinRoom, setIsJoinRoom] = useState(false);
   const [createRoomForm, setCreateRoomForm] = useState({
     name: "",
   });
-
   const [joinRoomForm, setJoinRoomForm] = useState({
     name: "",
     roomId: "",
@@ -38,6 +40,17 @@ export default function Home() {
   } = useWebSocketContext();
 
   const { handlePlayerId, handleRoomId, handlePlayers,handlePlayerView } = useGameContext();
+
+  useEffect(() => {
+    if (roomIdParam) {
+      console.log(roomIdParam);
+      setJoinRoomForm((prev) => ({
+        ...prev, 
+        roomId: roomIdParam
+      }));
+      setIsJoinRoom(true);
+    }
+  }, [roomIdParam]);
 
   const handleInputChange =
     (formType: "create" | "join", field: string) =>
@@ -214,7 +227,7 @@ export default function Home() {
                 </div>
               </DialogContent>
             </Dialog>
-            <Dialog>
+            <Dialog open={isJoinRoom} onOpenChange={setIsJoinRoom}>
               <DialogTrigger className="bg-white border-2 border-zinc-600 px-4 py-2 -rotate-6 rounded-lg shadow-md text-primary hover:bg-gray-100 transition-colors justify-items-stretch min-w-36 min-h-12">
                 Join Room
               </DialogTrigger>

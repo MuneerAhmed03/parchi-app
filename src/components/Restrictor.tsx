@@ -26,7 +26,7 @@ const ProtectPage: React.FC<ProtectPageProps> = ({ children }) => {
         return
       }
 
-      if(pathname === '/game' && (!isConnected || gameStatus)){
+      if(pathname === '/game' && (!isConnected || !gameStatus)){
         router.push('/');
         router.refresh()
         return
@@ -56,17 +56,14 @@ const ProtectPage: React.FC<ProtectPageProps> = ({ children }) => {
     const url = `${pathname}`
     
     const handleNavigationAttempt = () => {
-      const shouldWarn = true // Replace with your condition, e.g., unsaved changes
+      const shouldWarn = true 
       if (shouldWarn) {
         if (!confirm('Are you sure you want to leave this page? Unsaved changes will be lost.')) {
-          window.history.pushState(null, '', url) // Prevent navigation if canceled
-        }else{
-
+          window.history.pushState(null, '', url) 
         }
       }
     }
 
-    // Watch for pathname changes or searchParams changes
     window.addEventListener('popstate', handleNavigationAttempt)
 
     return () => {

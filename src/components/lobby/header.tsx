@@ -4,6 +4,7 @@ import { useGameContext } from "@/context/GameContext";
 import { useWebSocketContext } from "@/context/RoomContext";
 import { Button } from "../ui/button";
 
+const BASE_URL = process.env.BASE_URL || "http://localhost:3000";
 
 interface headerProps {
   handleLeaveRoom : ()=>void
@@ -14,7 +15,7 @@ const Header : React.FC<headerProps> = ({handleLeaveRoom}) => {
   const {sendMessage} =useWebSocketContext()
 
   const copyRoomId = () =>{
-    navigator.clipboard.writeText(roomId)
+    navigator.clipboard.writeText(`${BASE_URL}/?join=${roomId}`)
   }
 
   return (

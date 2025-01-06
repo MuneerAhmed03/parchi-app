@@ -8,6 +8,7 @@ import { useGameContext } from "@/context/GameContext";
 import WinnerModal from "./winner-modal";
 import { Toaster, toast } from 'react-hot-toast';
 import ExitButton from "./ExitButton";
+import HelpModal from "../HelpModal";
 
 const positions = ["left", "top", "right"];
 
@@ -116,6 +117,7 @@ export default function GameTable() {
     <div>
       <Toaster />
       <ExitButton />
+      <HelpModal />
       <div
         className="
         relative w-full h-screen 
