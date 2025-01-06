@@ -2,12 +2,6 @@
 import Image from "next/image";
 import Banner from "@/assets/parchi_banner-removebg.svg";
 import StackedParchi from "@/components/StackedParchi";
-import { FiMenu } from "react-icons/fi";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import {
   Dialog,
   DialogContent,
@@ -23,6 +17,7 @@ import { createRoom, joinRoom } from "@/lib/rooms";
 import { useRouter } from "next/navigation";
 import { PlayerLobby } from "@/lib/types";
 import { Toaster, toast } from 'react-hot-toast';
+import HelpModal from "@/components/HelpModal";
 
 export default function Home() {
   const router = useRouter();
@@ -36,8 +31,6 @@ export default function Home() {
   });
   const {
     handleConnect,
-    handleDisconnect,
-    isConnected,
     messages,
     sendMessage,
     lastProcessedEventIndex,
@@ -73,7 +66,7 @@ export default function Home() {
       handleRoomId(roomId);
       handlePlayerId(playerId);
 
-      handleConnect()
+      handleConnect(roomId)
         .then(() => {
           sendMessage({
             type: "join_room",
@@ -101,7 +94,7 @@ export default function Home() {
       handleRoomId(success.roomId);
       handlePlayerId(success.playerId);
 
-      handleConnect()
+      handleConnect(success.roomId)
         .then(() => {
           sendMessage({
             type: "join_room",
@@ -167,25 +160,8 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col">
       <Toaster />
+      <HelpModal className="top" />
       <header className="w-full relative flex justify-center items-center py-4">
-        {/* <Popover>
-          <PopoverTrigger
-            className="absolute top-4 right-4 p-2 rounded-md hover:bg-gray-100 focus:outline-none"
-            aria-label="Toggle Menu"
-          >
-            <FiMenu className="text-3xl hover:text-gray-700 rounded-md" />
-          </PopoverTrigger>
-          <PopoverContent className="w-80 absolute top-4 right-4 p-2 rounded-md hover:bg-gray-100 focus:outline-none">
-            <div className="grid gap-4">
-              <div className="space-y-2">
-                <h4 className="font-medium leading-none">Dimensions</h4>
-                <p className="text-sm text-muted-foreground">
-                  Set the dimensions for the layer.
-                </p>
-              </div>
-            </div>
-          </PopoverContent>
-        </Popover> */}
 
         <div className="relative w-full max-w-[500px] mx-auto">
           <Image
@@ -204,7 +180,7 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="flex-1 flex items-center justify-center font-pencil relative">
+      <main className="flex-1 flex items-center justify-center mb-20 font-pencil relative overflow-hidden">
         <div className="w-full max-w-[90vw] h-[60vh] relative">
           <div className="absolute inset-0 z-20">
             <StackedParchi count={4} />

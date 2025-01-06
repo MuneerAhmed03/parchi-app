@@ -7,10 +7,11 @@ import {
 } from "@/components/ui/dialog";
 import { HelpCircle } from "lucide-react";
 
-export default function HelpModal() {
+
+export default function HelpModal({className} : {className ?: string}) {
   return (
     <Dialog>
-      <DialogTrigger className="fixed bottom-2 right-2 md:bottom-4 md:right-4 bg-white/90 backdrop-blur-sm p-2 rounded-full shadow-lg hover:bg-white transition-all duration-300 hover:shadow-xl z-50">
+      <DialogTrigger className={`fixed bg-white/90 backdrop-blur-sm p-2 rounded-full shadow-lg hover:bg-white transition-all duration-300 hover:shadow-xl z-50 ${className == "top" ? 'top-2 right-2 md:top-4 md:right-4' : 'bottom-2 right-2 md:bottom-4 md:right-4'}`}>
         <HelpCircle className="w-6 h-6 text-black" />
       </DialogTrigger>
       <DialogContent className="bg-white font-pencil max-w-[95vw] md:max-w-2xl mx-auto h-[80vh] md:h-auto overflow-y-auto">

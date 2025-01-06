@@ -20,10 +20,10 @@ const Header : React.FC<headerProps> = ({handleLeaveRoom}) => {
   return (
     <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 md:mx-auto relative flex items-center justify-between md:w-1/2">
     <div className="flex items-center gap-2">
-      <span className="text-white font-medium">Room ID:</span>
-      <code className="bg-white/20 px-3 py-1 rounded-md text-white font-mono">
+      <span className="font-medium text-black">Room ID:</span>
+      <span className="bg-white/20 px-3 py-1 rounded-md font-mono text-black">
         {roomId}
-      </code>
+      </span>
     </div>
     <div className="flex gap-2">
       <Button

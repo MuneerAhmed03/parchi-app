@@ -28,6 +28,7 @@ export function PlayerCard({
   };
 
   return (
+    
     <div
       className={`
       absolute 
@@ -52,7 +53,21 @@ export function PlayerCard({
       md:p-4
 
       /* Pulse animation when it's player's turn */
-      ${isCurrentPlayer ? "motion:reduce:animate-bounce ring-2 ring-blue-900" : ""}
+      ${isCurrentPlayer ? `
+        bg-blue-50
+        shadow-lg
+        scale-110
+        ring-2
+        ring-blue-500
+        ring-offset-2
+        z-10
+      ` : `
+        bg-white/90
+        backdrop-blur-sm
+        hover:bg-white
+        hover:shadow-md
+        hover:scale-105
+      `}
     `}
     >
       <div

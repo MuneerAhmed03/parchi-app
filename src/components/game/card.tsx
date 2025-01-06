@@ -9,44 +9,59 @@ interface CardProps {
 
 export function Card({ value, selected = false, onClick, isTurn }: CardProps) {
   return (
-    <div
-      onClick={
-        isTurn
-          ? onClick
-          : () => {
-              console.log("getting clicked without turn");
-              return;
-            }
-      }
-      className={`
-        w-[73.60px] md:w-[120px]
-        h-[110.40px] md:h-[180px]
-        px-2
-        bg-white/90 
-        backdrop-blur-sm
-        rounded-lg 
-        shadow-lg 
-        flex 
-        items-center 
-        justify-center 
-        cursor-pointer 
-        transition-all
-        duration-300
-        hover:bg-white
-        hover:-translate-y-2
-        hover:shadow-xl
-        active:scale-95
-        font-pencil
-        ${selected ? "ring-2 ring-blue-500 -translate-y-2 md:-translate-y-4 bg-white" : ""}
-      `}
-    >
-      <span
-        className="text-base md:text-lg font-semibold break-words 
-      overflow-hidden 
-      text-center"
+    <div className="relative">
+
+      <div
+        onClick={isTurn ? onClick : undefined}
+        className={`
+          /* Base card structure */
+          relative
+          w-[73.60px] md:w-[120px]
+          h-[110.40px] md:h-[180px]
+          px-2
+          rounded-lg 
+          flex 
+          items-center 
+          justify-center 
+          transition-all
+          duration-300
+          font-pencil
+          /* Card appearance based on turn state */
+          ${isTurn ? `
+            bg-white
+            shadow-lg
+            ${selected ? `
+              ring-4
+              ring-blue-500
+              -translate-y-4
+              shadow-xl
+            ` : `
+              hover:-translate-y-2
+              hover:shadow-xl
+              hover:ring-2
+              hover:ring-blue-300
+            `}
+            cursor-pointer
+          ` : `
+            bg-gray-100
+            shadow-md
+            cursor-not-allowed
+            grayscale
+          `}
+        `}
       >
-        {value}
-      </span>
+        <span className={`
+          text-base md:text-lg 
+          font-semibold 
+          break-words 
+          overflow-hidden 
+          text-center
+          ${isTurn ? 'text-gray-800' : 'text-gray-500'}
+        `}>
+          {value}
+        </span>
+
+      </div>
     </div>
   );
 }

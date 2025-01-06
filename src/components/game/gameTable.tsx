@@ -18,7 +18,7 @@ const checkWinning = (cards: { title: string; id: string }[]) => {
 };
 
 export default function GameTable() {
-  const { roomId, playerId, currentPlayerView, handlePlayerView } =
+  const { roomId, playerId, currentPlayerView, handlePlayerView,gameStatus } =
     useGameContext();
   const {
     isConnected,
@@ -68,13 +68,13 @@ export default function GameTable() {
           const winnerName = message.winner;
           setWinner(winnerName);
           setShowWinnerModal(true);
-        } else if(message.type ==="player_disconnect"){
-          const name = gameState?.players.find(p=> p.id === message.data)?.name;
+        } else if (message.type === "player_disconnect") {
+          const name = gameState?.players.find(p => p.id === message.data)?.name;
           toast.error(`${name} Disconnected`, {
             duration: 3000,
             position: 'top-center',
           });
-        } else if(message.type === "game_start"){
+        } else if (message.type === "game_start") {
           handlePlayerView(message.data);
           setShowWinnerModal(false);
           setWinner("")
@@ -108,65 +108,69 @@ export default function GameTable() {
     })
   }
 
+  if(!isConnected || !gameStatus){
+    return;
+  }
+
   return (
     <div>
-      <Toaster/>
+      <Toaster />
       <ExitButton />
-    <div
-      className="
+      <div
+        className="
         relative w-full h-screen 
         flex items-center justify-center
         bg-gradient-to-br from-orange-400 to-orange-500
         transition-colors duration-500
       "
-    >
-      <div
-        className="
+      >
+        <div
+          className="
         absolute inset-0 
         bg-[url('/felt-pattern.png')]
         md:opacity-10
         
       "
-      />
+        />
 
-      <div
-        className="
+        <div
+          className="
         absolute inset-2 md:inset-8
         rounded-[100px]
         shadow-inner
         bg-black/5
       "
-      />
+        />
 
-      {board.slice(1).map((player, index) => {
-        const isCurrentPlayer = gameState
-          ? (gameState.currentPlayerIndex - gameState.playerIndex + 4) % 4 ===
+        {board.slice(1).map((player, index) => {
+          const isCurrentPlayer = gameState
+            ? (gameState.currentPlayerIndex - gameState.playerIndex + 4) % 4 ===
             index + 1
-          : false;
+            : false;
 
-        return (
-          <PlayerCard
-            key={player.id}
-            name={player.name}
-            isCurrentPlayer={isCurrentPlayer}
-            position={positions[index] as "top" | "bottom" | "left" | "right"}
-          />
-        );
-      })}
+          return (
+            <PlayerCard
+              key={player.id}
+              name={player.name}
+              isCurrentPlayer={isCurrentPlayer}
+              position={positions[index] as "top" | "bottom" | "left" | "right"}
+            />
+          );
+        })}
 
-<div
-  className="
+        <div
+          className="
     flex flex-col
     items-center
     gap-6
     mt-24 md:mt-0
   "
->
-  <button
-    onClick={() =>
-      selectedCard !== null ? handlePass(selectedCard) : undefined
-    }
-    className="
+        >
+          <button
+            onClick={() =>
+              selectedCard !== null ? handlePass(selectedCard) : undefined
+            }
+            className="
       bg-white/90
       backdrop-blur-sm
       px-4 md:px-8 
@@ -187,14 +191,14 @@ export default function GameTable() {
       disabled:cursor-not-allowed
       mt-6
     "
-    disabled={selectedCard === null}
-  >
-    Pass Card
-  </button>
+            disabled={selectedCard === null}
+          >
+            Pass Card
+          </button>
 
-  <button
-    onClick={handleClaimWin}
-    className={`
+          <button
+            onClick={handleClaimWin}
+            className={`
       mb-6
       bg-gradient-to-r
       from-yellow-400
@@ -219,15 +223,15 @@ export default function GameTable() {
       focus:ring-offset-2
       z-10
       ${isWinning ? "" : "hidden"}`}
-    aria-label="Claim win"
-  >
-    🎨 Claim Win!
-  </button>
-</div>
+            aria-label="Claim win"
+          >
+            🎨 THAPP!
+          </button>
+        </div>
 
-      <div
-        id="hand"
-        className="
+        <div
+          id="hand"
+          className="
         absolute 
         bottom-20
         md:bottom-4 
@@ -241,26 +245,44 @@ export default function GameTable() {
         backdrop-blur-sm
         mb-8
       "
-      >
-        {cards.map((card, index) => (
-          <Card
-            key={index}
-            value={card.title}
-            selected={index === selectedCard}
-            isTurn={gameState?.currentPlayerIndex === gameState?.playerIndex}
-            onClick={() => {
-              setSelectedCard(index === selectedCard ? null : index);
-            }}
-          />
-        ))}
+        >
+          {gameState?.currentPlayerIndex === gameState?.playerIndex && !selectedCard && (
+            <div className="absolute -top-6 left-1/2 -translate-x-1/2 whitespace-nowrap">
+              <div className="bg-blue-500 text-white text-xs px-2 py-1 rounded-full animate-bounce">
+                Your Turn!
+              </div>
+            </div>
+          )}
+
+          {cards.map((card, index) => (
+            <Card
+              key={index}
+              value={card.title}
+              selected={index === selectedCard}
+              isTurn={gameState?.currentPlayerIndex === gameState?.playerIndex}
+              onClick={() => {
+                setSelectedCard(index === selectedCard ? null : index);
+              }}
+            />
+          ))}
+
+          {gameState?.currentPlayerIndex != gameState?.playerIndex && (
+            <div className="
+            absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap
+          ">
+              <span className="bg-slate-200 text-black text-xs px-2 py-1 rounded-full animate-bounce">
+                Wait for your turn
+              </span>
+            </div>
+          )}
+        </div>
+        <WinnerModal
+          isOpen={showWinnerModal}
+          winnerName={winner}
+          onClose={() => setShowWinnerModal(false)}
+          onPlayAgain={handleRestart}
+        />
       </div>
-      <WinnerModal
-        isOpen={showWinnerModal}
-        winnerName={winner}
-        onClose={() => setShowWinnerModal(false)}
-        onPlayAgain={handleRestart}
-      />
-    </div>
     </div>
   );
 }

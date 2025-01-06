@@ -8,13 +8,8 @@ import { useGameContext } from "@/context/GameContext";
 import { useRouter } from "next/navigation";
 import { savePlayerView } from "@/store/indexedDB";
 import { PlayerView, PlayerLobby } from "@/lib/types";
+import HelpModal from "../HelpModal";
 
-const avatars = [
-  "/user-avtars/avtar1.png",
-  "/user-avtars/avtar2.png",
-  "/user-avtars/avtar3.png",
-  "/user-avtars/avtar4.png",
-];
 
 const LobbyComponent = () => {
   const getRandomTilt = () => Math.random() * 4 - 2;
@@ -25,7 +20,7 @@ const LobbyComponent = () => {
     lastProcessedEventIndex,
     updateLastProcessedEventIndex,
   } = useWebSocketContext();
-  const { playerId, playersArr, handlePlayerView, handlePlayers,roomId } =
+  const { playerId, playersArr, handlePlayerView, handlePlayers,roomId,handleGameStatus } =
     useGameContext();
   const router = useRouter();
   const [players, setPlayers] = useState<PlayerLobby[]>([]);
@@ -57,8 +52,8 @@ const LobbyComponent = () => {
         } else if (message.type === "game_start") {
           handlePlayerView(message.data);
           updateLastProcessedEventIndex(messages.length - 1);
+          handleGameStatus(true);
           router.push("/game"); 
-          console.log("break loggesd");
           break;
         } else if(message.type ==="player_disconnect"){
           const name = players.find(p=> p.playerId === message.data)?.playerName;
@@ -92,16 +87,23 @@ const LobbyComponent = () => {
     router.push("/")
   }
 
+  if(!isConnected){
+    return 
+    <div className="bg-[#ffa726] px-3 py-5 flex flex-col justify-around gap-5 overflow-hidden w-screen h-screen">
+
+    </div>
+  }
+
   return (
     <div className="bg-[#ffa726] px-3 py-5 flex flex-col justify-around gap-5 overflow-hidden w-screen h-screen">
       <Header handleLeaveRoom={handleLeaveRoom} />
+      <HelpModal className="top" />
       <div className="grid gap-3 grid-cols-1 p-2 md:grid-cols-2 lg:gap-5 justify-center place-items-center w-full md:w-fit mx-auto max-md:overflow-y-auto">
         {playerSlots.map((player, index) =>
           player ? (
             <UserCard
               key={player.playerId}
               playerName={player.playerName}
-              playerAvtar={avatars[Math.floor(Math.random() * 5)]}
               playerStatus={player.title}
               tilt={getRandomTilt()}
               isCurrentPlayer={index === currentIndex}

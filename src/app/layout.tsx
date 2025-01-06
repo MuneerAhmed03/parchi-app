@@ -45,7 +45,7 @@ export default function RootLayout({
         <GameContextProvider>
           <WebSocketProvider>
             {children}
-            <HelpModal />
+            
           </WebSocketProvider>
         </GameContextProvider>
       </body>

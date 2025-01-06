@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 
-const BASE_URL = "http://localhost:8082";
+const BASE_URL = "http://localhost";
 
 export const createRoom = async (
   playerName: string,
@@ -26,6 +26,7 @@ export const createRoom = async (
       throw new Error(`Failed to create room: ${errorMessage}`);
     }
     const roomId = await response.text();
+    console.log(roomId)
     return {
       roomId,
       playerId,

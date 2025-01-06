@@ -6,7 +6,7 @@ const useWebSocket = (url: string) => {
   const socketref = useRef<WebSocket | null>(null);
   const ws = socketref?.current;
 
-  const connect = () => {
+  const connect = (roomId:string) => {
     return new Promise<void>((resolve, reject) => {
       if (socketref.current) {
         if (socketref.current.readyState === WebSocket.OPEN) {
@@ -25,7 +25,7 @@ const useWebSocket = (url: string) => {
         return;
       }
 
-      const socket = new WebSocket(url);
+      const socket = new WebSocket(`${url}/ws?roomId=${roomId}`);
       socketref.current = socket;
 
       socket.onopen = () => {

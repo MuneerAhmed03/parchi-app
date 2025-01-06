@@ -1,5 +1,5 @@
 import { FC } from "react";
-import ParchiSvg from "../parchi-svg";
+import ParchiSvg from "@/components/parchi-svg";
 
 interface ParchiProps {
   playerId: number;

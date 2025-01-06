@@ -8,13 +8,14 @@ import React, {
   useEffect
 } from "react";
 import { PlayerLobby, PlayerView } from "@/lib/types";
-import Cookies from 'js-cookie';
 
 interface GameContextType {
   handlePlayerId: (player: string) => void;
   handleRoomId: (room: string) => void;
   handlePlayers: (playerArr: PlayerLobby[]) => void;
   handlePlayerView: (playerViewArg: PlayerView) => void;
+  handleGameStatus : (gameStatusAction:boolean) => void;
+  gameStatus:boolean;
   playerId: string;
   roomId: string;
   playersArr: PlayerLobby[];
@@ -30,6 +31,7 @@ export const GameContextProvider: React.FC<{ children: ReactNode }> = ({
   const [playerId, setPlayerId] = useState<string>("");
   const [players, setPlayers] = useState<PlayerLobby[]>([]);
   const [playerView, setPlayerView] = useState<PlayerView | null>(null);
+  const [gameStatus,setGameStatus] = useState<boolean>(false);
 
   const handlePlayerId = (player: string) => {
     setPlayerId(player);
@@ -44,11 +46,15 @@ export const GameContextProvider: React.FC<{ children: ReactNode }> = ({
     setPlayerView(playerViewArg);
   };
 
-  useEffect(() => {
-    if (roomId) {
-      Cookies.set('roomId', roomId); 
-    }
-  }, [roomId])
+  const handleGameStatus = (gameStatusAction:boolean) =>{
+    setGameStatus(gameStatusAction);
+  }
+
+  // useEffect(() => {
+  //   if (roomId) {
+  //     Cookies.set('roomId', roomId); 
+  //   }
+  // }, [roomId])
 
 
   const contextValue = useMemo(
@@ -61,6 +67,8 @@ export const GameContextProvider: React.FC<{ children: ReactNode }> = ({
       handleRoomId,
       handlePlayers,
       handlePlayerView,
+      gameStatus,
+      handleGameStatus
     }),
     [roomId, playerId, players, playerView],
   );

@@ -13,7 +13,6 @@ import { CrayonAvatar as Avatar } from "../Avatar";
 
 export interface UserCardProps {
   playerName: string | null;
-  playerAvtar?: string;
   playerStatus: string | null;
   tilt: number;
   handleSubmit?: (message: any) => void;
@@ -22,7 +21,6 @@ export interface UserCardProps {
 
 const UserCard: FC<UserCardProps> = ({
   playerName,
-  playerAvtar,
   playerStatus,
   tilt,
   handleSubmit,
