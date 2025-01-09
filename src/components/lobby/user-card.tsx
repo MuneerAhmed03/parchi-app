@@ -10,12 +10,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { useGameContext } from "@/context/GameContext";
 import { CrayonAvatar as Avatar } from "../Avatar";
+import { validateTitle } from "../../lib/validation/validateTitle";
 
 export interface UserCardProps {
   playerName: string | null;
   playerStatus: string | null;
   tilt: number;
   handleSubmit?: (message: any) => void;
+  validateInput?: (input: string) => boolean;
   isCurrentPlayer: boolean;
 }
 
@@ -25,15 +27,36 @@ const UserCard: FC<UserCardProps> = ({
   tilt,
   handleSubmit,
   isCurrentPlayer,
+  validateInput
 }) => {
   const [title, setTitle] = useState<string | null>(playerStatus);
   const { playerId, roomId } = useGameContext();
+  const [validationErrors, setValidationErrors] = useState({
+    title: "",
+  });
 
+  const cleanTitle = (title: string) => {
+    if (!title) return '';
+    return title.charAt(0).toUpperCase() + title.slice(1);
+  }
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setTitle(event.target.value);
+    const error = validateTitle(event.target.value);
+    setValidationErrors((prev) => ({
+      title: error,
+    }));
+    setTitle(cleanTitle(event.target.value));
   };
 
   const handleButtonClick = () => {
+    if (!title) return;
+
+    if (validateInput && validateInput(title)) {
+      setValidationErrors((prev) => ({
+        title: "Title should be unique",
+      }))
+      return;
+    };
+
     if (handleSubmit) {
       handleSubmit({
         type: "submit_title",
@@ -45,6 +68,7 @@ const UserCard: FC<UserCardProps> = ({
       });
     }
   };
+
 
   const cardStyle = {
     transform: `rotate(${tilt}deg)`,
@@ -69,8 +93,8 @@ const UserCard: FC<UserCardProps> = ({
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      {playerName && 
-        <Avatar name={playerName} className="w-12 h-12"/>
+      {playerName &&
+        <Avatar name={playerName} className="w-12 h-12" />
       }
       <p className="font-bold text-lg md:text-xl font-pencil">
         {playerName || "Waiting for the user"}
@@ -90,7 +114,7 @@ const UserCard: FC<UserCardProps> = ({
                   <DialogTitle className="text-center font-bold">
                     Submit Card Title
                   </DialogTitle>
-                  <div className="grid gap-4 place-items-center py-4">
+                  <div className="w-full flex flex-col items-center gap-4">
                     <Input
                       id="roomId"
                       className="w-full font-semibold text-center"
@@ -99,10 +123,21 @@ const UserCard: FC<UserCardProps> = ({
                       autoComplete="off"
                       aria-autocomplete="none"
                     />
-                    <button className="w-full" onClick={handleButtonClick}>
+                    {validationErrors.title && (
+                      <p className="text-red-500 text-xs text-center w-full">
+                        {validationErrors.title}
+                      </p>
+                    )}
+                    <button
+                      className={`w-full ${validationErrors.title && "cursor-not-allowed bg-gray-400 hover:bg-gray-500"
+                        }`}
+                      onClick={handleButtonClick}
+                      disabled={!!validationErrors.title}
+                    >
                       Submit
                     </button>
                   </div>
+
                 </DialogContent>
               </Dialog>
             ) : (

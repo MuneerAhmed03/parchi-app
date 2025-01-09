@@ -6,7 +6,6 @@ import StatusBar from "./status-bar";
 import { useWebSocketContext } from "@/context/RoomContext";
 import { useGameContext } from "@/context/GameContext";
 import { useRouter } from "next/navigation";
-import { savePlayerView } from "@/store/indexedDB";
 import { PlayerView, PlayerLobby } from "@/lib/types";
 import HelpModal from "../HelpModal";
 
@@ -32,10 +31,6 @@ const LobbyComponent = () => {
   }, []);
 
   useEffect(() => {
-    const saveToDB = async (playerView: PlayerView) => {
-      await savePlayerView(playerView);
-      console.log("saved to index");
-    };
     if (messages.length > lastProcessedEventIndex + 1) {
       for (let i = lastProcessedEventIndex + 1; i < messages.length; i++) {
         const message = messages[i];
@@ -87,6 +82,10 @@ const LobbyComponent = () => {
     router.push("/")
   }
 
+  const validateTitle = (input : string)=>{
+    return players.some((player) => player.title === input)
+  }
+
   if(!isConnected){
     return 
     <div className="bg-[#ffa726] px-3 py-5 flex flex-col justify-around gap-5 overflow-hidden w-screen h-screen">
@@ -107,7 +106,7 @@ const LobbyComponent = () => {
               playerStatus={player.title}
               tilt={getRandomTilt()}
               isCurrentPlayer={index === currentIndex}
-              {...(isConnected ? { handleSubmit: sendMessage } : {})}
+              {...(isConnected ? { handleSubmit: sendMessage, validateInput:validateTitle } : {})}
             />
           ) : (
             <UserCard
