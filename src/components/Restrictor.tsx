@@ -11,9 +11,10 @@ interface ProtectPageProps {
 }
 
 const ProtectPage: React.FC<ProtectPageProps> = ({ children }) => {
-  const pathname = usePathname()
-  const {isConnected} = useWebSocketContext();
-  const {gameStatus}=useGameContext();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const {isConnected,cleanRoom} = useWebSocketContext();
+  const {gameStatus,clearGame}=useGameContext();
   const router = useRouter();
 
   useEffect(()=>{
@@ -21,13 +22,13 @@ const ProtectPage: React.FC<ProtectPageProps> = ({ children }) => {
       if (pathname === '/') return
 
       if(pathname === '/lobby' && !isConnected){
-        router.push('/');
+        router.replace('/');
         router.refresh()
         return
       }
 
       if(pathname === '/game' && (!isConnected || !gameStatus)){
-        router.push('/');
+        router.replace('/');
         router.refresh()
         return
       }
@@ -37,14 +38,13 @@ const ProtectPage: React.FC<ProtectPageProps> = ({ children }) => {
 
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      const shouldWarn = true // Replace with your condition, e.g., unsaved changes
+      const shouldWarn = true 
       if (shouldWarn) {
         e.preventDefault()
         e.returnValue = '' 
       }
     }
 
-    // Add the event listener for the beforeunload event to detect refresh or closing
     window.addEventListener('beforeunload', handleBeforeUnload)
 
     return () => {
@@ -53,13 +53,15 @@ const ProtectPage: React.FC<ProtectPageProps> = ({ children }) => {
   }, [])
 
   useEffect(() => {
-    const url = `${pathname}`
-    
+    const url = `${pathname}/${searchParams}`
     const handleNavigationAttempt = () => {
-      const shouldWarn = true 
+    const shouldWarn = isConnected && gameStatus;
       if (shouldWarn) {
-        if (!confirm('Are you sure you want to leave this page? Unsaved changes will be lost.')) {
+        if (!confirm('Are you sure you want to leave unfinished game?')) {
           window.history.pushState(null, '', url) 
+        }else{
+          cleanRoom();
+          clearGame();
         }
       }
     }
@@ -69,7 +71,7 @@ const ProtectPage: React.FC<ProtectPageProps> = ({ children }) => {
     return () => {
       window.removeEventListener('popstate', handleNavigationAttempt)
     }
-  }, [pathname])
+  }, [pathname,searchParams])
 
   return <>{children}</>
 }

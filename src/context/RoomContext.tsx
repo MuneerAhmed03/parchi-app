@@ -16,6 +16,7 @@ interface WebSocketContextType {
   sendMessage: (message: any) => boolean;
   lastProcessedEventIndex: number;
   updateLastProcessedEventIndex: (index: number) => void;
+  cleanRoom:()=>void;
 }
 
 const WebSocketContext = createContext<WebSocketContextType | undefined>(
@@ -25,10 +26,15 @@ const WebSocketContext = createContext<WebSocketContextType | undefined>(
 export const WebSocketProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const { isConnected, messages, sendMessage, connect, disconnect } =
+  const { isConnected, messages, sendMessage, connect, disconnect ,clearRoom } =
     useWebSocket("ws://localhost");
   const [lastProcessedEventIndex, setLastProcessedEventIndex] =
     useState<number>(-1);
+
+    const cleanRoom =()=>{
+      clearRoom();
+      setLastProcessedEventIndex(-1);
+    }
 
   const updateLastProcessedEventIndex = (index: number) => {
     setLastProcessedEventIndex(index);
@@ -51,6 +57,7 @@ export const WebSocketProvider: React.FC<{ children: ReactNode }> = ({
         sendMessage,
         lastProcessedEventIndex,
         updateLastProcessedEventIndex,
+        cleanRoom
       }}
     >
       {children}

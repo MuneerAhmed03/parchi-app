@@ -26,7 +26,7 @@ export const createRoom = async (
       throw new Error(`Failed to create room: ${errorMessage}`);
     }
     const roomId = await response.text();
-    console.log(roomId)
+    // console.log(roomId)
     return {
       roomId,
       playerId,

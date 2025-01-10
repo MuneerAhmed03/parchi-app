@@ -12,16 +12,18 @@ import { useGameContext } from "@/context/GameContext";
 
 export default function ExitButton() {
   const router = useRouter();
-  const { sendMessage } = useWebSocketContext();
-  const { roomId, playerId } = useGameContext();
+  const { sendMessage,cleanRoom } = useWebSocketContext();
+  const { roomId, playerId,clearGame } = useGameContext();
 
   const handleExit = () => {
     sendMessage({
       type: "room_exit",
       roomId,
-      playerId,
+      playerId
     });
-    router.push("/");
+    clearGame();
+    cleanRoom();
+    router.replace("/");
   };
 
   return (

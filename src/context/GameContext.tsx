@@ -15,6 +15,7 @@ interface GameContextType {
   handlePlayers: (playerArr: PlayerLobby[]) => void;
   handlePlayerView: (playerViewArg: PlayerView) => void;
   handleGameStatus : (gameStatusAction:boolean) => void;
+  clearGame:()=>void;
   gameStatus:boolean;
   playerId: string;
   roomId: string;
@@ -50,12 +51,13 @@ export const GameContextProvider: React.FC<{ children: ReactNode }> = ({
     setGameStatus(gameStatusAction);
   }
 
-  // useEffect(() => {
-  //   if (roomId) {
-  //     Cookies.set('roomId', roomId); 
-  //   }
-  // }, [roomId])
-
+  const clearGame=()=>{
+    setRoomId("");
+    setPlayerId("");
+    setPlayers([]);
+    setPlayerView(null);
+    setGameStatus(false);
+  }
 
   const contextValue = useMemo(
     () => ({
@@ -68,9 +70,10 @@ export const GameContextProvider: React.FC<{ children: ReactNode }> = ({
       handlePlayers,
       handlePlayerView,
       gameStatus,
-      handleGameStatus
+      handleGameStatus,
+      clearGame
     }),
-    [roomId, playerId, players, playerView],
+    [roomId, playerId, players, playerView,gameStatus],
   );
 
   return (

@@ -9,6 +9,8 @@ import WinnerModal from "./winner-modal";
 import { Toaster, toast } from 'react-hot-toast';
 import ExitButton from "./ExitButton";
 import HelpModal from "../HelpModal";
+import { useRouter } from "next/navigation";
+import { isDragActive } from "framer-motion";
 
 const positions = ["left", "top", "right"];
 
@@ -19,7 +21,7 @@ const checkWinning = (cards: { title: string; id: string }[]) => {
 };
 
 export default function GameTable() {
-  const { roomId, playerId, currentPlayerView, handlePlayerView,gameStatus } =
+  const { roomId, playerId, currentPlayerView, handlePlayerView,gameStatus,clearGame } =
     useGameContext();
   const {
     isConnected,
@@ -27,8 +29,9 @@ export default function GameTable() {
     sendMessage,
     lastProcessedEventIndex,
     updateLastProcessedEventIndex,
+    cleanRoom
   } = useWebSocketContext();
-
+  const router = useRouter();
   const [selectedCard, setSelectedCard] = useState<number | null>(null);
   const [cards, setCards] = useState<{ title: string; id: string }[]>([]);
   const [gameState, setGameState] = useState<PlayerView>();
@@ -36,6 +39,7 @@ export default function GameTable() {
   const [isWinning, setIsWinning] = useState<boolean>(false);
   const [winner, setWinner] = useState("");
   const [board, setBoard] = useState<Player[]>([]);
+  const [isActive,setIsActive] = useState<boolean>(true)
 
   useEffect(() => {
     const mountGame = async () => {
@@ -66,10 +70,11 @@ export default function GameTable() {
           const updateGameState = message.data;
           handlePlayerView(updateGameState);
         } else if (message.type === "game_end") {
+          setIsActive(false);
           const winnerName = message.winner;
           setWinner(winnerName);
           setShowWinnerModal(true);
-        } else if (message.type === "player_disconnect") {
+        } else if (message.type === "player_disconnect" ) {
           const name = gameState?.players.find(p => p.id === message.data)?.name;
           toast.error(`${name} Disconnected`, {
             duration: 3000,
@@ -77,13 +82,40 @@ export default function GameTable() {
           });
         } else if (message.type === "game_start") {
           handlePlayerView(message.data);
+          setIsActive(true);
           setShowWinnerModal(false);
           setWinner("")
+        }else if (message.type === "player_left" ) {
+          const name = gameState?.players.find(p => p.id === message.data)?.name;
+          toast.error(`${name} Left`, {
+            duration: 3000,
+            position: 'top-center',
+          });
+        }else if (message.type === "player_joined" ) {
+          const name = gameState?.players.find(p => p.id === message.data)?.name;
+          toast.success(`${name} Joined`, {
+            duration: 3000,
+            position: 'top-center',
+          });
         }
       }
       updateLastProcessedEventIndex(messages.length - 1);
     }
   }, [messages, lastProcessedEventIndex, updateLastProcessedEventIndex]);
+
+  useEffect(()=>{
+    if(isConnected){
+      toast.success(`Connected`, {
+        duration: 3000,
+        position: 'top-center',
+      });
+    }else{
+      toast.error(`Disconnected`, {
+        duration: 3000,
+        position: 'top-center',
+      });
+    }
+  },[isConnected])
 
   const handlePass = (cardIndex: number) => {
     sendMessage({
@@ -107,6 +139,18 @@ export default function GameTable() {
       type: "restart",
       roomId
     })
+  }
+
+  const handleExit = () =>{
+    sendMessage({
+      type: "room_exit",
+      roomId,
+      playerId
+    });
+    cleanRoom();
+    clearGame();
+    router.replace("/")
+    router.refresh();
   }
 
   if(!isConnected || !gameStatus){
@@ -193,7 +237,7 @@ export default function GameTable() {
       disabled:cursor-not-allowed
       mt-6
     "
-            disabled={selectedCard === null}
+            disabled={selectedCard === null || !isActive}
           >
             Pass Card
           </button>
@@ -226,6 +270,7 @@ export default function GameTable() {
       z-10
       ${isWinning ? "" : "hidden"}`}
             aria-label="Claim win"
+            disabled={!isActive}
           >
             🎨 THAPP!
           </button>
@@ -272,7 +317,7 @@ export default function GameTable() {
             <div className="
             absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap
           ">
-              <span className="bg-slate-200 text-black text-xs px-2 py-1 rounded-full animate-bounce">
+              <span className=" text-white px-2 py-1 rounded-full animate-bounce">
                 Wait for your turn
               </span>
             </div>
@@ -283,6 +328,7 @@ export default function GameTable() {
           winnerName={winner}
           onClose={() => setShowWinnerModal(false)}
           onPlayAgain={handleRestart}
+          onExit={handleExit}
         />
       </div>
     </div>

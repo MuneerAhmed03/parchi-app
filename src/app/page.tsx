@@ -15,6 +15,7 @@ import { Toaster, toast } from "react-hot-toast";
 import HelpModal from "@/components/HelpModal";
 import { validateName } from "@/lib/validation/validateName";
 import { validateRoomId } from "@/lib/validation/validateRoomId";
+import BackgroundPattern from "../components/BackGroundPattern";
 
 export default function Home() {
   const router = useRouter();
@@ -35,11 +36,10 @@ export default function Home() {
   });
   const { handleConnect, messages, sendMessage, lastProcessedEventIndex, updateLastProcessedEventIndex } = useWebSocketContext();
 
-  const { handlePlayerId, handleRoomId, handlePlayers, handlePlayerView } = useGameContext();
+  const { handlePlayerId, handleRoomId, handleGameStatus ,handlePlayers, handlePlayerView } = useGameContext();
 
   useEffect(() => {
     if (roomIdParam) {
-      console.log(roomIdParam);
       setJoinRoomForm((prev) => ({
         ...prev,
         roomId: roomIdParam,
@@ -171,14 +171,14 @@ export default function Home() {
             title: player.title,
           }));
           handlePlayers(updatedPlayers);
-          router.push("/lobby");
+          router.replace("/lobby");
           updateLastProcessedEventIndex(i);
-          console.log(lastProcessedEventIndex);
           break;
         } else if (message.type === "gameState") {
           handlePlayerView(message.data);
           updateLastProcessedEventIndex(messages.length - 1);
-          router.push("/game");
+          handleGameStatus(true);
+          router.replace("/game");
         } else {
           console.log("messagefrom page.tsx", message);
         }
@@ -190,6 +190,7 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col">
       <Toaster />
+      <BackgroundPattern/>
       <HelpModal className="top" />
       <header className="w-full relative flex justify-center items-center py-4">
         <div className="relative w-full max-w-[500px] mx-auto">

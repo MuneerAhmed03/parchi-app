@@ -36,7 +36,7 @@ const Header : React.FC<headerProps> = ({handleLeaveRoom}) => {
         <Copy className="h-4 w-4" />
         Copy
       </Button>
-      <Button variant="destructive" className="bg-[#d32f2f]" size="sm">
+      <Button variant="destructive" className="bg-[#d32f2f]" size="sm" onClick={handleLeaveRoom}>
         Leave Room
       </Button>
     </div>

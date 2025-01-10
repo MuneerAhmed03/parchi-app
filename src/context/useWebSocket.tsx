@@ -15,7 +15,6 @@ const useWebSocket = (url: string) => {
           const interval = setInterval(() => {
             if (socketref.current?.readyState === WebSocket.OPEN) {
               clearInterval(interval);
-              console.log("resolved in checking");
               resolve();
             }
           }, 100);
@@ -31,14 +30,14 @@ const useWebSocket = (url: string) => {
       socket.onopen = () => {
         setIsConnected(true);
         if (socketref.current?.readyState === WebSocket.OPEN) {
-          console.log("ws connected");
-          console.log("resolved in onopen");
+          // console.log("ws connected");
+          // console.log("resolved in onopen");
           resolve();
         }
       };
 
       socket.onmessage = (event) => {
-        console.log("Message Received: ", event.data);
+        // console.log("Message Received: ", event.data);
         const message = JSON.parse(event.data);
         if (message === "ping") {
           socket.send("pong");
@@ -53,7 +52,7 @@ const useWebSocket = (url: string) => {
       };
 
       socket.onerror = (error) => {
-        console.log("ws error", error);
+        // console.log("ws error", error);
         socket.close();
         reject(error);
       };
@@ -75,7 +74,7 @@ const useWebSocket = (url: string) => {
   }, [url]);
 
   const sendMessage = (message: any) => {
-    console.log("send Messahge called: ", message);
+    // console.log("send Messahge called: ", message);
     if (socketref.current && socketref.current.readyState == WebSocket.OPEN) {
       socketref.current.send(JSON.stringify(message));
       return true;
@@ -85,7 +84,13 @@ const useWebSocket = (url: string) => {
     }
   };
 
-  return { isConnected, messages, sendMessage, connect, disconnect };
+  const clearRoom = () =>{
+    setIsConnected(false);
+    setMessages([]);
+    socketref.current = null;
+  }
+
+  return { isConnected, messages, sendMessage, connect, disconnect,clearRoom };
 };
 
 export default useWebSocket;

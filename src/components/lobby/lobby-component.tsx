@@ -18,8 +18,9 @@ const LobbyComponent = () => {
     sendMessage,
     lastProcessedEventIndex,
     updateLastProcessedEventIndex,
+    cleanRoom
   } = useWebSocketContext();
-  const { playerId, playersArr, handlePlayerView, handlePlayers,roomId,handleGameStatus } =
+  const { playerId, playersArr, handlePlayerView, handlePlayers,roomId,handleGameStatus,clearGame } =
     useGameContext();
   const router = useRouter();
   const [players, setPlayers] = useState<PlayerLobby[]>([]);
@@ -48,7 +49,7 @@ const LobbyComponent = () => {
           handlePlayerView(message.data);
           updateLastProcessedEventIndex(messages.length - 1);
           handleGameStatus(true);
-          router.push("/game"); 
+          router.replace("/game"); 
           break;
         } else if(message.type ==="player_disconnect"){
           const name = players.find(p=> p.playerId === message.data)?.playerName;
@@ -79,7 +80,9 @@ const LobbyComponent = () => {
       roomId,
       playerId
     })
-    router.push("/")
+    cleanRoom();
+    clearGame();
+    router.replace("/")
   }
 
   const validateTitle = (input : string)=>{

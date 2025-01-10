@@ -3,7 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { WebSocketProvider } from "@/context/RoomContext";
 import { GameContextProvider } from "@/context/GameContext";
-import HelpModal from "@/components/HelpModal";
+import BackgroundPattern from "../components/BackGroundPattern";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -42,6 +42,7 @@ export default function RootLayout({
         className={`
           ${pencilFont.variable} ${geistSans.variable} ${geistMono.variable} antialiased min-h-screen`}
       >
+
         <GameContextProvider>
           <WebSocketProvider>
             {children}
