@@ -27,7 +27,7 @@ const UserCard: FC<UserCardProps> = ({
   tilt,
   handleSubmit,
   isCurrentPlayer,
-  validateInput
+  validateInput,
 }) => {
   const [title, setTitle] = useState<string | null>(playerStatus);
   const { playerId, roomId } = useGameContext();
@@ -36,9 +36,9 @@ const UserCard: FC<UserCardProps> = ({
   });
 
   const cleanTitle = (title: string) => {
-    if (!title) return '';
+    if (!title) return "";
     return title.charAt(0).toUpperCase() + title.slice(1);
-  }
+  };
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const error = validateTitle(event.target.value);
     setValidationErrors((prev) => ({
@@ -53,9 +53,9 @@ const UserCard: FC<UserCardProps> = ({
     if (validateInput && validateInput(title)) {
       setValidationErrors((prev) => ({
         title: "Title should be unique",
-      }))
+      }));
       return;
-    };
+    }
 
     if (handleSubmit) {
       handleSubmit({
@@ -68,7 +68,6 @@ const UserCard: FC<UserCardProps> = ({
       });
     }
   };
-
 
   const cardStyle = {
     transform: `rotate(${tilt}deg)`,
@@ -88,15 +87,15 @@ const UserCard: FC<UserCardProps> = ({
 
   return (
     <div
-      className="bg-[#E6E6E6] flex flex-col p-3 items-center justify-around w-64 h-36 md:w-[340px] md:h-44 lg:w-[420px] lg:h-48 border-2 border-black"
+      className="bg-[#E6E6E6] flex flex-col p-3 items-center justify-around w-64 h-[130px] md:w-[340px] md:h-44 lg:w-[420px] lg:h-48 border-2 border-black md:gap-2 gap-1 md:scale-none scale-75"
       style={cardStyle}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      {playerName &&
-        <Avatar name={playerName} className="w-12 h-12" />
-      }
-      <p className="font-bold text-lg md:text-xl font-pencil">
+      {playerName && (
+        <Avatar name={playerName} className="md:w-12 md:h-12 h-10 w-10" />
+      )}
+      <p className="font-semibold text-sm md:text-xl font-pencil mt-1">
         {playerName || "Waiting for the user"}
       </p>
       {playerName && (
@@ -105,13 +104,13 @@ const UserCard: FC<UserCardProps> = ({
             playerStatus === null ? (
               <Dialog>
                 <DialogTrigger
-                  className="bg-white text-black border-2 border-black hover:bg-[#ffa726] hover:text-white font-bold w-full rounded-3xl px-3 py-2"
+                  className="bg-white text-black border-2 border-black hover:bg-[#ffa726] my-1 hover:text-white font-semibold w-full rounded-3xl md:px-4 md:py-2 px-1 py-1 md:w-1/2 w-3/4 text-md md:text-lg"
                   disabled={!!playerStatus}
                 >
                   Submit Title..
                 </DialogTrigger>
                 <DialogContent className="bg-white font-pencil text-primary">
-                  <DialogTitle className="text-center font-bold">
+                  <DialogTitle className="text-center font-bold sm:text-md">
                     Submit Card Title
                   </DialogTitle>
                   <div className="w-full flex flex-col items-center gap-4">
@@ -129,24 +128,25 @@ const UserCard: FC<UserCardProps> = ({
                       </p>
                     )}
                     <button
-                      className={`w-full ${validationErrors.title && "cursor-not-allowed bg-gray-400 hover:bg-gray-500"
-                        }`}
+                      className={`w-full ${
+                        validationErrors.title &&
+                        "cursor-not-allowed bg-gray-400 hover:bg-gray-500"
+                      }`}
                       onClick={handleButtonClick}
                       disabled={!!validationErrors.title}
                     >
                       Submit
                     </button>
                   </div>
-
                 </DialogContent>
               </Dialog>
             ) : (
-              <div className="text-center font-bold text-lg md:text-xl font-pencil">
+              <div className="text-center font-bold text-md md:text-xl font-pencil text-gray-700 bg-orange-100 px-6 py-3 rounded-lg border border-orange-100">
                 {playerStatus}
               </div>
             )
           ) : (
-            <div className="text-center font-bold text-lg md:text-xl font-pencil">
+            <div className="text-center font-bold text-md md:text-xl font-pencil">
               {playerStatus || "Waiting for player to submit title"}
             </div>
           )}

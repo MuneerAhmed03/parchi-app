@@ -1,14 +1,13 @@
 "use client";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import UserCard from "./user-card";
 import Header from "./header";
 import StatusBar from "./status-bar";
 import { useWebSocketContext } from "@/context/RoomContext";
 import { useGameContext } from "@/context/GameContext";
 import { useRouter } from "next/navigation";
-import { PlayerView, PlayerLobby } from "@/lib/types";
+import { PlayerLobby } from "@/lib/types";
 import HelpModal from "../HelpModal";
-
 
 const LobbyComponent = () => {
   const getRandomTilt = () => Math.random() * 4 - 2;
@@ -18,10 +17,17 @@ const LobbyComponent = () => {
     sendMessage,
     lastProcessedEventIndex,
     updateLastProcessedEventIndex,
-    cleanRoom
+    cleanRoom,
   } = useWebSocketContext();
-  const { playerId, playersArr, handlePlayerView, handlePlayers,roomId,handleGameStatus,clearGame } =
-    useGameContext();
+  const {
+    playerId,
+    playersArr,
+    handlePlayerView,
+    handlePlayers,
+    roomId,
+    handleGameStatus,
+    clearGame,
+  } = useGameContext();
   const router = useRouter();
   const [players, setPlayers] = useState<PlayerLobby[]>([]);
   const [playerid, setPlayerid] = useState<string | null>(null);
@@ -49,10 +55,12 @@ const LobbyComponent = () => {
           handlePlayerView(message.data);
           updateLastProcessedEventIndex(messages.length - 1);
           handleGameStatus(true);
-          router.replace("/game"); 
+          router.replace("/game");
           break;
-        } else if(message.type ==="player_disconnect"){
-          const name = players.find(p=> p.playerId === message.data)?.playerName;
+        } else if (message.type === "player_disconnect") {
+          const name = players.find(
+            (p) => p.playerId === message.data,
+          )?.playerName;
           alert(`${name} got disconnected`);
         }
       }
@@ -74,26 +82,24 @@ const LobbyComponent = () => {
     (player) => player?.playerId === playerid,
   );
 
-  const handleLeaveRoom = ()=>{
+  const handleLeaveRoom = () => {
     sendMessage({
-      type:"room_exit",
+      type: "room_exit",
       roomId,
-      playerId
-    })
+      playerId,
+    });
     cleanRoom();
     clearGame();
-    router.replace("/")
-  }
+    router.replace("/");
+  };
 
-  const validateTitle = (input : string)=>{
-    return players.some((player) => player.title === input)
-  }
+  const validateTitle = (input: string) => {
+    return players.some((player) => player.title === input);
+  };
 
-  if(!isConnected){
-    return 
-    <div className="bg-[#ffa726] px-3 py-5 flex flex-col justify-around gap-5 overflow-hidden w-screen h-screen">
-
-    </div>
+  if (!isConnected) {
+    return;
+    <div className="bg-[#ffa726] px-3 py-5 flex flex-col justify-around gap-5 overflow-hidden w-screen h-screen"></div>;
   }
 
   return (
@@ -109,7 +115,9 @@ const LobbyComponent = () => {
               playerStatus={player.title}
               tilt={getRandomTilt()}
               isCurrentPlayer={index === currentIndex}
-              {...(isConnected ? { handleSubmit: sendMessage, validateInput:validateTitle } : {})}
+              {...(isConnected
+                ? { handleSubmit: sendMessage, validateInput: validateTitle }
+                : {})}
             />
           ) : (
             <UserCard

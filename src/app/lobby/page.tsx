@@ -1,3 +1,4 @@
+"use client"
 import LobbyComponent from "@/components/lobby/lobby-component";
 import React from "react";
 import ProtectPage from "../../components/Restrictor";

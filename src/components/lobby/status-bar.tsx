@@ -12,7 +12,7 @@ const StatusBar: React.FC<StatusBarProps> = ({ playersReady }) => {
       <div>{`${playersReady}/4 Players Ready`}</div>
       <div className="h-3 md:h-5 max-w-[330px] w-full bg-white border-2 border-black mx-auto rounded-full my-1">
         <div
-          className="h-full bg-green-400 rounded-full"
+          className="h-full bg-green-400 rounded-full transition-all duration-300"
           style={{ width: `${(progress / 4) * 100}%` }}
         ></div>
       </div>

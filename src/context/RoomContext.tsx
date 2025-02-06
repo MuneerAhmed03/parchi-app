@@ -3,20 +3,21 @@ import React, {
   createContext,
   useContext,
   ReactNode,
-  useRef,
   useState,
 } from "react";
 import useWebSocket from "./useWebSocket";
 
+const WS_URL = process.env.WS_URL || "wss://parchi-grge.onrender.com"
+
 interface WebSocketContextType {
-  handleConnect: (roomId:string) => Promise<void>;
+  handleConnect: (roomId: string) => Promise<void>;
   handleDisconnect: () => void;
   isConnected: boolean;
   messages: any[];
   sendMessage: (message: any) => boolean;
   lastProcessedEventIndex: number;
   updateLastProcessedEventIndex: (index: number) => void;
-  cleanRoom:()=>void;
+  cleanRoom: () => void;
 }
 
 const WebSocketContext = createContext<WebSocketContextType | undefined>(
@@ -26,21 +27,21 @@ const WebSocketContext = createContext<WebSocketContextType | undefined>(
 export const WebSocketProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const { isConnected, messages, sendMessage, connect, disconnect ,clearRoom } =
-    useWebSocket("ws://localhost");
+  const { isConnected, messages, sendMessage, connect, disconnect, clearRoom } =
+    useWebSocket(WS_URL);
   const [lastProcessedEventIndex, setLastProcessedEventIndex] =
     useState<number>(-1);
 
-    const cleanRoom =()=>{
-      clearRoom();
-      setLastProcessedEventIndex(-1);
-    }
+  const cleanRoom = () => {
+    clearRoom();
+    setLastProcessedEventIndex(-1);
+  }
 
   const updateLastProcessedEventIndex = (index: number) => {
     setLastProcessedEventIndex(index);
   };
 
-  const handleConnect = (roomId:string) => {
+  const handleConnect = (roomId: string) => {
     return connect(roomId);
   };
   const handleDisconnect = () => {

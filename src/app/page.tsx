@@ -17,6 +17,7 @@ import { validateName } from "@/lib/validation/validateName";
 import { validateRoomId } from "@/lib/validation/validateRoomId";
 import BackgroundPattern from "../components/BackGroundPattern";
 
+
 export default function Home() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -188,6 +189,7 @@ export default function Home() {
   }, [messages, lastProcessedEventIndex, updateLastProcessedEventIndex]);
 
   return (
+    
     <div className="min-h-screen flex flex-col">
       <Toaster />
       <BackgroundPattern/>

@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 
-const BASE_URL = "http://localhost";
+const BASE_URL = process.env.BASE_URL ||  "https://parchi-grge.onrender.com";
 
 export const createRoom = async (
   playerName: string,

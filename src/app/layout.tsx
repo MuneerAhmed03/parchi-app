@@ -4,6 +4,7 @@ import "./globals.css";
 import { WebSocketProvider } from "@/context/RoomContext";
 import { GameContextProvider } from "@/context/GameContext";
 import BackgroundPattern from "../components/BackGroundPattern";
+import { Suspense } from 'react'
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -45,8 +46,9 @@ export default function RootLayout({
 
         <GameContextProvider>
           <WebSocketProvider>
+          <Suspense>
             {children}
-            
+          </Suspense>
           </WebSocketProvider>
         </GameContextProvider>
       </body>
