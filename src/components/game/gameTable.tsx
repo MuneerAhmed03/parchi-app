@@ -6,10 +6,11 @@ import { Player, PlayerView } from "@/lib/types";
 import { useWebSocketContext } from "@/context/RoomContext";
 import { useGameContext } from "@/context/GameContext";
 import WinnerModal from "./winner-modal";
-import { Toaster, toast } from 'react-hot-toast';
+import { Toaster, toast } from "react-hot-toast";
 import ExitButton from "./ExitButton";
 import HelpModal from "../HelpModal";
 import { useRouter } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
 
 const positions = ["left", "top", "right"];
 
@@ -20,15 +21,21 @@ const checkWinning = (cards: { title: string; id: string }[]) => {
 };
 
 export default function GameTable() {
-  const { roomId, playerId, currentPlayerView, handlePlayerView, gameStatus, clearGame } =
-    useGameContext();
+  const {
+    roomId,
+    playerId,
+    currentPlayerView,
+    handlePlayerView,
+    gameStatus,
+    clearGame,
+  } = useGameContext();
   const {
     isConnected,
     messages,
     sendMessage,
     lastProcessedEventIndex,
     updateLastProcessedEventIndex,
-    cleanRoom
+    cleanRoom,
   } = useWebSocketContext();
   const router = useRouter();
   const [selectedCard, setSelectedCard] = useState<number | null>(null);
@@ -38,7 +45,12 @@ export default function GameTable() {
   const [isWinning, setIsWinning] = useState<boolean>(false);
   const [winner, setWinner] = useState("");
   const [board, setBoard] = useState<Player[]>([]);
-  const [isActive, setIsActive] = useState<boolean>(true)
+  const [isActive, setIsActive] = useState<boolean>(true);
+  const [passingCard, setPassingCard] = useState<{
+    card: { title: string; id: string };
+    fromPosition: DOMRect | null;
+    toPosition: DOMRect | null;
+  } | null>(null);
 
   useEffect(() => {
     const mountGame = async () => {
@@ -57,6 +69,36 @@ export default function GameTable() {
       setCards(playerView.hand);
       setGameState(playerView);
       setIsWinning(checkWinning(playerView.hand));
+      if (gameState && playerView.hand.length < gameState.hand.length) {
+        const passedCard = gameState.hand.find(
+          (c) => !playerView.hand.some((pc) => pc.id === c.id),
+        );
+
+        if (passedCard) {
+          const currentPlayerIndex = gameState.currentPlayerIndex;
+          const prevPlayerIndex = (currentPlayerIndex - 1 + 4) % 4;
+
+          const fromPlayer = board.find((p) => p.index === prevPlayerIndex);
+          const toPlayer = board.find((p) => p.index === currentPlayerIndex);
+
+          if (fromPlayer && toPlayer) {
+            const fromElement = document.querySelector(
+              `[data-player-id="${fromPlayer.id}"]`,
+            );
+            const toElement = document.querySelector(
+              `[data-player-id="${toPlayer.id}"]`,
+            );
+
+            if (fromElement && toElement) {
+              setPassingCard({
+                card: passedCard,
+                fromPosition: fromElement.getBoundingClientRect(),
+                toPosition: toElement.getBoundingClientRect(),
+              });
+            }
+          }
+        }
+      }
     };
     mountGame();
   }, [currentPlayerView]);
@@ -74,27 +116,33 @@ export default function GameTable() {
           setWinner(winnerName);
           setShowWinnerModal(true);
         } else if (message.type === "player_disconnect") {
-          const name = gameState?.players.find(p => p.id === message.data)?.name;
+          const name = gameState?.players.find(
+            (p) => p.id === message.data,
+          )?.name;
           toast.error(`${name} Disconnected`, {
             duration: 3000,
-            position: 'top-center',
+            position: "top-center",
           });
         } else if (message.type === "game_start") {
           handlePlayerView(message.data);
           setIsActive(true);
           setShowWinnerModal(false);
-          setWinner("")
+          setWinner("");
         } else if (message.type === "player_left") {
-          const name = gameState?.players.find(p => p.id === message.data)?.name;
+          const name = gameState?.players.find(
+            (p) => p.id === message.data,
+          )?.name;
           toast.error(`${name} Left`, {
             duration: 3000,
-            position: 'top-center',
+            position: "top-center",
           });
         } else if (message.type === "player_joined") {
-          const name = gameState?.players.find(p => p.id === message.data)?.name;
+          const name = gameState?.players.find(
+            (p) => p.id === message.data,
+          )?.name;
           toast.success(`${name} Joined`, {
             duration: 3000,
-            position: 'top-center',
+            position: "top-center",
           });
         }
       }
@@ -106,15 +154,15 @@ export default function GameTable() {
     if (isConnected) {
       toast.success(`Connected`, {
         duration: 3000,
-        position: 'top-center',
+        position: "top-center",
       });
     } else {
       toast.error(`Disconnected`, {
         duration: 3000,
-        position: 'top-center',
+        position: "top-center",
       });
     }
-  }, [isConnected])
+  }, [isConnected]);
 
   const handlePass = (cardIndex: number) => {
     sendMessage({
@@ -136,21 +184,21 @@ export default function GameTable() {
   const handleRestart = () => {
     sendMessage({
       type: "restart",
-      roomId
-    })
-  }
+      roomId,
+    });
+  };
 
   const handleExit = () => {
     sendMessage({
       type: "room_exit",
       roomId,
-      playerId
+      playerId,
     });
     cleanRoom();
     clearGame();
-    router.replace("/")
+    router.replace("/");
     router.refresh();
-  }
+  };
 
   if (!isConnected || !gameStatus) {
     return;
@@ -190,7 +238,7 @@ export default function GameTable() {
         {board.slice(1).map((player, index) => {
           const isCurrentPlayer = gameState
             ? (gameState.currentPlayerIndex - gameState.playerIndex + 4) % 4 ===
-            index + 1
+              index + 1
             : false;
 
           return (
@@ -292,13 +340,14 @@ export default function GameTable() {
         mb-8
       "
         >
-          {gameState?.currentPlayerIndex === gameState?.playerIndex && selectedCard === null && (
-            <div className="absolute -top-6 left-1/2 -translate-x-1/2 whitespace-nowrap">
-              <div className="bg-blue-500 text-white text-xs px-2 py-1 rounded-full animate-bounce">
-                Your Turn!
+          {gameState?.currentPlayerIndex === gameState?.playerIndex &&
+            selectedCard === null && (
+              <div className="absolute -top-6 left-1/2 -translate-x-1/2 whitespace-nowrap">
+                <div className="bg-blue-500 text-white text-xs px-2 py-1 rounded-full animate-bounce">
+                  Your Turn!
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
           {cards.map((card, index) => (
             <Card
@@ -313,9 +362,11 @@ export default function GameTable() {
           ))}
 
           {gameState?.currentPlayerIndex != gameState?.playerIndex && (
-            <div className="
+            <div
+              className="
             absolute -top-8 md:mt-2 left-1/2 -translate-x-1/2 whitespace-nowrap
-          ">
+          "
+            >
               <span className=" text-white px-2 font-semibold py-1 md:py-0 rounded-full animate-bounce">
                 Wait for your turn
               </span>
@@ -330,6 +381,37 @@ export default function GameTable() {
           onExit={handleExit}
         />
       </div>
+      <AnimatePresence>
+        {passingCard && passingCard.fromPosition && passingCard.toPosition && (
+          <motion.div
+            key="passing-card"
+            initial={{
+              x: passingCard.fromPosition.left,
+              y: passingCard.fromPosition.top,
+              scale: 0.5,
+              opacity: 1,
+            }}
+            animate={{
+              x: passingCard.toPosition.left,
+              y: passingCard.toPosition.top,
+              scale: 1,
+              opacity: 0,
+            }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.8, ease: "easeInOut" }}
+            className="absolute z-50 pointer-events-none"
+            onAnimationComplete={() => setPassingCard(null)}
+          >
+            <div className="w-[73.60px] md:w-[120px] h-[110.40px] md:h-[180px]">
+              <Card
+                value={passingCard.card.title}
+                isTurn={false}
+                selected={false}
+              />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
