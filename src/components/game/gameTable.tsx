@@ -10,7 +10,6 @@ import { Toaster, toast } from 'react-hot-toast';
 import ExitButton from "./ExitButton";
 import HelpModal from "../HelpModal";
 import { useRouter } from "next/navigation";
-import { isDragActive } from "framer-motion";
 
 const positions = ["left", "top", "right"];
 
@@ -21,7 +20,7 @@ const checkWinning = (cards: { title: string; id: string }[]) => {
 };
 
 export default function GameTable() {
-  const { roomId, playerId, currentPlayerView, handlePlayerView,gameStatus,clearGame } =
+  const { roomId, playerId, currentPlayerView, handlePlayerView, gameStatus, clearGame } =
     useGameContext();
   const {
     isConnected,
@@ -39,7 +38,7 @@ export default function GameTable() {
   const [isWinning, setIsWinning] = useState<boolean>(false);
   const [winner, setWinner] = useState("");
   const [board, setBoard] = useState<Player[]>([]);
-  const [isActive,setIsActive] = useState<boolean>(true)
+  const [isActive, setIsActive] = useState<boolean>(true)
 
   useEffect(() => {
     const mountGame = async () => {
@@ -74,7 +73,7 @@ export default function GameTable() {
           const winnerName = message.winner;
           setWinner(winnerName);
           setShowWinnerModal(true);
-        } else if (message.type === "player_disconnect" ) {
+        } else if (message.type === "player_disconnect") {
           const name = gameState?.players.find(p => p.id === message.data)?.name;
           toast.error(`${name} Disconnected`, {
             duration: 3000,
@@ -85,13 +84,13 @@ export default function GameTable() {
           setIsActive(true);
           setShowWinnerModal(false);
           setWinner("")
-        }else if (message.type === "player_left" ) {
+        } else if (message.type === "player_left") {
           const name = gameState?.players.find(p => p.id === message.data)?.name;
           toast.error(`${name} Left`, {
             duration: 3000,
             position: 'top-center',
           });
-        }else if (message.type === "player_joined" ) {
+        } else if (message.type === "player_joined") {
           const name = gameState?.players.find(p => p.id === message.data)?.name;
           toast.success(`${name} Joined`, {
             duration: 3000,
@@ -103,19 +102,19 @@ export default function GameTable() {
     }
   }, [messages, lastProcessedEventIndex, updateLastProcessedEventIndex]);
 
-  useEffect(()=>{
-    if(isConnected){
+  useEffect(() => {
+    if (isConnected) {
       toast.success(`Connected`, {
         duration: 3000,
         position: 'top-center',
       });
-    }else{
+    } else {
       toast.error(`Disconnected`, {
         duration: 3000,
         position: 'top-center',
       });
     }
-  },[isConnected])
+  }, [isConnected])
 
   const handlePass = (cardIndex: number) => {
     sendMessage({
@@ -141,7 +140,7 @@ export default function GameTable() {
     })
   }
 
-  const handleExit = () =>{
+  const handleExit = () => {
     sendMessage({
       type: "room_exit",
       roomId,
@@ -153,7 +152,7 @@ export default function GameTable() {
     router.refresh();
   }
 
-  if(!isConnected || !gameStatus){
+  if (!isConnected || !gameStatus) {
     return;
   }
 
@@ -293,7 +292,7 @@ export default function GameTable() {
         mb-8
       "
         >
-          {gameState?.currentPlayerIndex === gameState?.playerIndex && !selectedCard && (
+          {gameState?.currentPlayerIndex === gameState?.playerIndex && selectedCard === null && (
             <div className="absolute -top-6 left-1/2 -translate-x-1/2 whitespace-nowrap">
               <div className="bg-blue-500 text-white text-xs px-2 py-1 rounded-full animate-bounce">
                 Your Turn!
@@ -315,9 +314,9 @@ export default function GameTable() {
 
           {gameState?.currentPlayerIndex != gameState?.playerIndex && (
             <div className="
-            absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap
+            absolute -top-8 md:mt-2 left-1/2 -translate-x-1/2 whitespace-nowrap
           ">
-              <span className=" text-white px-2 py-1 rounded-full animate-bounce">
+              <span className=" text-white px-2 font-semibold py-1 md:py-0 rounded-full animate-bounce">
                 Wait for your turn
               </span>
             </div>

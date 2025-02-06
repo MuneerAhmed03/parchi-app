@@ -128,10 +128,9 @@ const UserCard: FC<UserCardProps> = ({
                       </p>
                     )}
                     <button
-                      className={`w-full ${
-                        validationErrors.title &&
+                      className={`w-full ${validationErrors.title &&
                         "cursor-not-allowed bg-gray-400 hover:bg-gray-500"
-                      }`}
+                        }`}
                       onClick={handleButtonClick}
                       disabled={!!validationErrors.title}
                     >
@@ -141,13 +140,13 @@ const UserCard: FC<UserCardProps> = ({
                 </DialogContent>
               </Dialog>
             ) : (
-              <div className="text-center font-bold text-md md:text-xl font-pencil text-gray-700 bg-orange-100 px-6 py-3 rounded-lg border border-orange-100">
+              <div className="text-center font-semibold text-md md:text-xl font-pencil ">
                 {playerStatus}
               </div>
             )
           ) : (
-            <div className="text-center font-bold text-md md:text-xl font-pencil">
-              {playerStatus || "Waiting for player to submit title"}
+            <div className="text-center font-semibold text-md md:text-xl font-pencil ">
+              {playerStatus || "Waiting for title"}
             </div>
           )}
         </>

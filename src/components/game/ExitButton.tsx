@@ -12,14 +12,14 @@ import { useGameContext } from "@/context/GameContext";
 
 export default function ExitButton() {
   const router = useRouter();
-  const { sendMessage,cleanRoom } = useWebSocketContext();
-  const { roomId, playerId,clearGame } = useGameContext();
+  const { sendMessage, cleanRoom } = useWebSocketContext();
+  const { roomId, playerId, clearGame } = useGameContext();
 
   const handleExit = () => {
     sendMessage({
       type: "room_exit",
       roomId,
-      playerId
+      playerId,
     });
     clearGame();
     cleanRoom();
@@ -28,7 +28,7 @@ export default function ExitButton() {
 
   return (
     <Dialog>
-      <DialogTrigger className="fixed top-2 right-2 md:top-4 md:right-4 bg-white/90 backdrop-blur-sm p-2 rounded-full shadow-lg hover:bg-white transition-all duration-300 hover:shadow-xl z-50">
+      <DialogTrigger className="fixed top-1 right-2 md:top-4 md:right-4 bg-white/90 backdrop-blur-sm p-2 rounded-full md:scale-none scale-75 shadow-lg hover:bg-white transition-all duration-300 hover:shadow-xl z-50">
         <LogOut className="w-6 h-6 text-red-600" />
       </DialogTrigger>
       <DialogContent className="bg-white font-pencil max-w-sm mx-auto">
@@ -56,4 +56,4 @@ export default function ExitButton() {
       </DialogContent>
     </Dialog>
   );
-} 
+}

@@ -7,11 +7,12 @@ import {
 } from "@/components/ui/dialog";
 import { HelpCircle } from "lucide-react";
 
-
-export default function HelpModal({className} : {className ?: string}) {
+export default function HelpModal({ className }: { className?: string }) {
   return (
     <Dialog>
-      <DialogTrigger className={`fixed bg-white/90 backdrop-blur-sm p-2 rounded-full shadow-lg hover:bg-white transition-all duration-300 hover:shadow-xl z-50 ${className == "top" ? 'top-2 right-2 md:top-4 md:right-4' : 'bottom-2 right-2 md:bottom-4 md:right-4'}`}>
+      <DialogTrigger
+        className={`fixed bg-white/90 backdrop-blur-sm p-2 rounded-full shadow-lg hover:bg-white transition-all duration-300 hover:shadow-xl z-50 md:scale-100 scale-75 ${className == "top" ? "top-1 right-1 md:top-4 md:right-4" : "bottom-2 right-2 md:bottom-4 md:right-4"}`}
+      >
         <HelpCircle className="w-6 h-6 text-black" />
       </DialogTrigger>
       <DialogContent className="bg-white font-pencil max-w-[95vw] md:max-w-2xl mx-auto h-[80vh] md:h-auto overflow-y-auto">
@@ -26,8 +27,8 @@ export default function HelpModal({className} : {className ?: string}) {
               Game Overview
             </h3>
             <p className="text-sm md:text-base">
-              Parchi is a card matching game where players try to collect four cards
-              of the same title to win.
+              Parchi is a card matching game where players try to collect four
+              cards of the same title to win.
             </p>
           </section>
 
@@ -38,7 +39,9 @@ export default function HelpModal({className} : {className ?: string}) {
             <ul className="list-disc pl-4 md:pl-5 space-y-0.5 md:space-y-1 text-sm md:text-base">
               <li>4 players are required to start the game</li>
               <li>Each player must submit a unique title in the lobby</li>
-              <li>Cards with player-submitted titles are distributed randomly</li>
+              <li>
+                Cards with player-submitted titles are distributed randomly
+              </li>
             </ul>
           </section>
 
@@ -48,7 +51,9 @@ export default function HelpModal({className} : {className ?: string}) {
             </h3>
             <ul className="list-disc pl-4 md:pl-5 space-y-0.5 md:space-y-1 text-sm md:text-base">
               <li>Players take turns clockwise</li>
-              <li>On your turn, select a card and pass it to the next player</li>
+              <li>
+                On your turn, select a card and pass it to the next player
+              </li>
               <li>Try to collect four cards with the same title</li>
               <li>When you have four matching cards, click "Claim Win"</li>
             </ul>
@@ -59,8 +64,8 @@ export default function HelpModal({className} : {className ?: string}) {
               Winning
             </h3>
             <p className="text-sm md:text-base">
-              The first player to collect four cards with matching titles wins the
-              game!
+              The first player to collect four cards with matching titles wins
+              the game!
             </p>
           </section>
         </div>

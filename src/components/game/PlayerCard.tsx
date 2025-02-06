@@ -8,12 +8,6 @@ interface PlayerCardProps {
   position: "top" | "bottom" | "left" | "right";
 }
 
-const avatars = [
-  "/user-avtars/avtar1.png",
-  "/user-avtars/avtar2.png",
-  "/user-avtars/avtar3.png",
-  "/user-avtars/avtar4.png",
-];
 
 export function PlayerCard({
   name,
@@ -28,7 +22,7 @@ export function PlayerCard({
   };
 
   return (
-    
+
     <div
       className={`
       absolute 
