@@ -8,6 +8,7 @@ interface PlayerCardProps {
   position: "top" | "bottom" | "left" | "right";
 }
 
+
 export function PlayerCard({
   name,
   isCurrentPlayer = false,
@@ -21,9 +22,9 @@ export function PlayerCard({
   };
 
   return (
+
     <div
       className={`
-      data-player-id={player.id}
       absolute 
       ${positionStyles[position]}
       bg-white/90
@@ -46,9 +47,7 @@ export function PlayerCard({
       md:p-4
 
       /* Pulse animation when it's player's turn */
-      ${
-        isCurrentPlayer
-          ? `
+      ${isCurrentPlayer ? `
         bg-blue-50
         shadow-lg
         scale-110
@@ -56,15 +55,13 @@ export function PlayerCard({
         ring-blue-500
         ring-offset-2
         z-10
-      `
-          : `
+      ` : `
         bg-white/90
         backdrop-blur-sm
         hover:bg-white
         hover:shadow-md
         hover:scale-105
-      `
-      }
+      `}
     `}
     >
       <div

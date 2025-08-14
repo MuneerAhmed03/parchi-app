@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import React, { FC, useState, useMemo } from "react";
+import React, { FC, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -11,7 +11,6 @@ import { Input } from "@/components/ui/input";
 import { useGameContext } from "@/context/GameContext";
 import { CrayonAvatar as Avatar } from "../Avatar";
 import { validateTitle } from "../../lib/validation/validateTitle";
-import { hslToHex } from "@/lib/utils";
 
 export interface UserCardProps {
   playerName: string | null;
@@ -70,16 +69,6 @@ const UserCard: FC<UserCardProps> = ({
     }
   };
 
-  const textCol = useMemo(() => {
-    if (!playerName) return "#000000";
-
-    const hue: number = playerName
-      .split("")
-      .reduce((acc, char) => acc + char.charCodeAt(0), 0) % 360;
-
-    return hslToHex(hue, 60, 60);
-  }, [playerName]);
-
   const cardStyle = {
     transform: `rotate(${tilt}deg)`,
     transition:
@@ -106,9 +95,7 @@ const UserCard: FC<UserCardProps> = ({
       {playerName && (
         <Avatar name={playerName} className="md:w-12 md:h-12 h-10 w-10" />
       )}
-      <p
-        className={`font-bold text-sm md:text-md font-pencil mt-1 text-[${textCol}]`}
-      >
+      <p className="font-semibold text-sm md:text-xl font-pencil mt-1">
         {playerName || "Waiting for the user"}
       </p>
       {playerName && (
