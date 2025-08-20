@@ -8,6 +8,7 @@ import { useGameContext } from "@/context/GameContext";
 import { useRouter } from "next/navigation";
 import { PlayerLobby } from "@/lib/types";
 import HelpModal from "../HelpModal";
+import { Toaster } from "react-hot-toast";
 
 const LobbyComponent = () => {
   const getRandomTilt = () => Math.random() * 4 - 2;
@@ -104,6 +105,7 @@ const LobbyComponent = () => {
 
   return (
     <div className="bg-[#ffa726] px-3 py-5 flex flex-col justify-around gap-5 overflow-hidden w-screen h-screen">
+      <Toaster />
       <Header handleLeaveRoom={handleLeaveRoom} />
       <HelpModal className="top" />
       <div className="grid gap-3 grid-cols-1 p-2 md:grid-cols-2 lg:gap-5 justify-center place-items-center w-full md:w-fit mx-auto max-md:overflow-y-auto">

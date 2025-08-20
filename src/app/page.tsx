@@ -23,6 +23,8 @@ export default function Home() {
   const searchParams = useSearchParams();
   const roomIdParam = searchParams.get("join");
   const [isJoinRoom, setIsJoinRoom] = useState(false);
+  const [isCreatingRoom, setIsCreatingRoom] = useState(false);
+  const [isJoiningRoom, setIsJoiningRoom] = useState(false);
   const [createRoomForm, setCreateRoomForm] = useState({
     name: "",
   });
@@ -88,6 +90,8 @@ export default function Home() {
   };
 
   const handleCreateRoom = async () => {
+    if (isCreatingRoom) return;
+    setIsCreatingRoom(true);
     try {
       const { playerId, roomId } = await createRoom(createRoomForm.name);
 
@@ -107,15 +111,23 @@ export default function Home() {
           });
         })
         .catch((error) => {
-          console.log("ws not connected");
+          console.log("ws not connected", error);
+          toast.error("Failed to connect. Please try again.", {
+            duration: 3000,
+            position: "top-center",
+          });
+          setIsCreatingRoom(false);
           return true;
         });
     } catch (error) {
       console.error("Error creating room :", error);
+      setIsCreatingRoom(false);
     }
   };
 
   const handleJoinRoom = async () => {
+    if (isJoiningRoom) return;
+    setIsJoiningRoom(true);
     try {
       const success = await joinRoom(joinRoomForm.roomId, joinRoomForm.name);
 
@@ -135,7 +147,12 @@ export default function Home() {
           });
         })
         .catch((error) => {
-          console.log("ws not connected");
+          console.log("ws not connected", error);
+          toast.error("Failed to connect. Please try again.", {
+            duration: 3000,
+            position: "top-center",
+          });
+          setIsJoiningRoom(false);
           return true;
         });
     } catch (error: any) {
@@ -156,6 +173,7 @@ export default function Home() {
         });
       }
       console.error("Error joining room:", error);
+      setIsJoiningRoom(false);
     }
   };
 
@@ -221,8 +239,21 @@ export default function Home() {
                     <Input id="name" className="col-span-3" value={createRoomForm.name} onChange={handleInputChange("create", "name")} autoComplete="off" aria-autocomplete="none" />
                     {validationErrors.createName && <p className="text-red-500 text-xs col-span-4 text-right">{validationErrors.createName}</p>}
                   </div>
-                  <button className={`w-full ${validationErrors.createName && "cursor-not-allowed bg-gray-400 hover:bg-gray-500"}`} onClick={handleCreateRoom} disabled={!!validationErrors.createName}>
-                    Create Room
+                  <button
+                    className={`w-full inline-flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed ${
+                      (validationErrors.createName || isCreatingRoom) && "cursor-not-allowed"
+                    }`}
+                    onClick={handleCreateRoom}
+                    disabled={!!validationErrors.createName || isCreatingRoom}
+                    aria-busy={isCreatingRoom}
+                  >
+                    {isCreatingRoom && (
+                      <span
+                        className="h-4 w-4 rounded-full border-2 border-gray-400 border-t-transparent animate-spin"
+                        aria-hidden
+                      />
+                    )}
+                    {isCreatingRoom ? "Creating…" : "Create Room"}
                   </button>
                 </div>
               </DialogContent>
@@ -246,8 +277,21 @@ export default function Home() {
                     <Input id="roomId" className="col-span-3" value={joinRoomForm.roomId} onChange={handleInputChange("join", "roomId")} autoComplete="off" aria-autocomplete="none" />
                     {validationErrors.roomId && <p className="text-red-500 col-span-4 text-right text-xs">{validationErrors.roomId}</p>}
                   </div>
-                  <button className={`w-full ${(validationErrors.joinName || validationErrors.roomId) && "cursor-not-allowed bg-gray-400 hover:bg-gray-500"}`} onClick={handleJoinRoom} disabled={!!validationErrors.joinName || !!validationErrors.roomId}>
-                    Join Room
+                  <button
+                    className={`w-full inline-flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed ${
+                      (validationErrors.joinName || validationErrors.roomId || isJoiningRoom) && "cursor-not-allowed"
+                    }`}
+                    onClick={handleJoinRoom}
+                    disabled={!!validationErrors.joinName || !!validationErrors.roomId || isJoiningRoom}
+                    aria-busy={isJoiningRoom}
+                  >
+                    {isJoiningRoom && (
+                      <span
+                        className="h-4 w-4 rounded-full border-2 border-gray-400 border-t-transparent animate-spin"
+                        aria-hidden
+                      />
+                    )}
+                    {isJoiningRoom ? "Joining…" : "Join Room"}
                   </button>
                 </div>
               </DialogContent>

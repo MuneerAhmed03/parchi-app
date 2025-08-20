@@ -2,6 +2,7 @@ import { LogOut as Exit, Share2 as Share } from "lucide-react";
 import React from "react";
 import { useGameContext } from "@/context/GameContext";
 import { Button } from "../ui/button";
+import { toast } from "react-hot-toast";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
@@ -12,8 +13,14 @@ interface headerProps {
 const Header: React.FC<headerProps> = ({ handleLeaveRoom }) => {
   const { roomId } = useGameContext();
 
-  const copyRoomId = () => {
-    navigator.clipboard.writeText(`${BASE_URL}/?join=${roomId}`);
+  const copyRoomId = async () => {
+    const url = `${BASE_URL}/?join=${roomId}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      toast.success("Invite link copied to clipboard");
+    } catch (e) {
+      toast.error("Failed to copy invite link");
+    }
   };
 
   return (

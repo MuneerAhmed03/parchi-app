@@ -34,6 +34,7 @@ const UserCard: FC<UserCardProps> = ({
   const [validationErrors, setValidationErrors] = useState({
     title: "",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const cleanTitle = (title: string) => {
     if (!title) return "";
@@ -48,6 +49,7 @@ const UserCard: FC<UserCardProps> = ({
   };
 
   const handleButtonClick = () => {
+    if (isSubmitting) return;
     if (!title) return;
 
     if (validateInput && validateInput(title)) {
@@ -58,6 +60,7 @@ const UserCard: FC<UserCardProps> = ({
     }
 
     if (handleSubmit) {
+      setIsSubmitting(true);
       handleSubmit({
         type: "submit_title",
         data: {
@@ -121,6 +124,7 @@ const UserCard: FC<UserCardProps> = ({
                       onChange={handleChange}
                       autoComplete="off"
                       aria-autocomplete="none"
+                      disabled={isSubmitting}
                     />
                     {validationErrors.title && (
                       <p className="text-red-500 text-xs text-center w-full">
@@ -128,13 +132,25 @@ const UserCard: FC<UserCardProps> = ({
                       </p>
                     )}
                     <button
-                      className={`w-full ${validationErrors.title &&
+                      className={`w-full flex items-center justify-center gap-2 ${
+                        (validationErrors.title || isSubmitting) &&
                         "cursor-not-allowed bg-gray-400 hover:bg-gray-500"
-                        }`}
+                      }`}
                       onClick={handleButtonClick}
-                      disabled={!!validationErrors.title}
+                      disabled={!!validationErrors.title || isSubmitting}
+                      aria-busy={isSubmitting}
                     >
-                      Submit
+                      {isSubmitting ? (
+                        <>
+                          <span
+                            className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-current border-r-transparent"
+                            aria-hidden="true"
+                          />
+                          Submitting...
+                        </>
+                      ) : (
+                        "Submit"
+                      )}
                     </button>
                   </div>
                 </DialogContent>

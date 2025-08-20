@@ -17,6 +17,7 @@ interface WinningModalProps {
 
 export default  function Winnerodal({ isOpen, onClose, onPlayAgain, winnerName,onExit }: WinningModalProps) {
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 })
+  const [isPlayingAgain, setIsPlayingAgain] = useState(false)
 
   useEffect(() => {
     const updateWindowSize = () => {
@@ -75,10 +76,27 @@ export default  function Winnerodal({ isOpen, onClose, onPlayAgain, winnerName,o
             className="flex flex-col sm:flex-row gap-4 w-full"
           >
             <Button
-              onClick={onPlayAgain}
-              className="flex-1 bg-amber-200 text-amber-900 hover:bg-amber-100 rounded-full text-lg font-semibold px-8 py-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-amber-100/50"
+              onClick={() => {
+                if (isPlayingAgain) return;
+                setIsPlayingAgain(true);
+                try {
+                  const maybePromise = onPlayAgain();
+                  // If onPlayAgain throws synchronously, re-enable.
+                } catch (e) {
+                  setIsPlayingAgain(false);
+                }
+              }}
+              disabled={isPlayingAgain}
+              aria-busy={isPlayingAgain}
+              className="flex-1 bg-amber-200 text-amber-900 hover:bg-amber-100 rounded-full text-lg font-semibold px-8 py-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-amber-100/50 disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              Play Again
+              {isPlayingAgain && (
+                <span
+                  className="h-4 w-4 rounded-full border-2 border-amber-900/60 border-t-transparent animate-spin"
+                  aria-hidden
+                />
+              )}
+              {isPlayingAgain ? "Starting…" : "Play Again"}
             </Button>
             <Button
               onClick={onExit}
@@ -103,4 +121,3 @@ export default  function Winnerodal({ isOpen, onClose, onPlayAgain, winnerName,o
     </Dialog>
   )
 }
-
