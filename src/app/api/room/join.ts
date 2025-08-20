@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from "uuid";
 
 export const runtime = "edge";
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL;
 
 export const joinRoom = async (
   roomId: string,

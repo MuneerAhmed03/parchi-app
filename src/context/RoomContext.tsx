@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import useWebSocket from "./useWebSocket";
 
-const WS_URL = process.env.WS_URL || "wss://parchi-grge.onrender.com"
+const WS_URL = process.env.NEXT_PUBLIC_BACKEND_WS_URL || "ws://localhost:8080/ws";
 
 interface WebSocketContextType {
   handleConnect: (roomId: string) => Promise<void>;
